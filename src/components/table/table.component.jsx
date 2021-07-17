@@ -43,15 +43,10 @@ const Table = (props) => {
 
     return (
     <div className="table">
-        <div style={{ height: '100%', width: '100%' }}>
         <DataGrid
+            autoHeight
             rows={rows}
             columns={columns}
-            //pagination
-            //pageSize={50}
-            //rowCount={100}
-            //paginationMode="server"
-            //onPageChange={handlePageChange}
             loading={false}
             checkboxSelection
             disableColumnMenu
@@ -65,7 +60,6 @@ const Table = (props) => {
             }}
             selectionModel={props.selectionModel}
         />
-        </div>
     </div>
   );
 }

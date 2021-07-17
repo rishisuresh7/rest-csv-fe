@@ -6,7 +6,6 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import AccordionActions from '@material-ui/core/AccordionActions';
 import Table from '../table/table.component';
-import './list.styles.scss';
 
 const List = (props) => {
     const [selected, setSelected] = useState([]);
