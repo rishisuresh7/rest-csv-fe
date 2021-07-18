@@ -2,21 +2,29 @@ import React, {useState, useEffect} from 'react';
 import List from './list.component';
 import './list-items.styles.scss';
 
-const ListItems = () => {
+const ListItems = (props) => {
     const [categories, setCategories] = useState([]);
     useEffect(() => {
-        fetch(`/api/categories`)
+        fetch(`/api/categories`, {
+            headers: {
+                'Authorization': props.token,
+            }
+        })
         .then(response => response.json())
         .then(response => {
-            setCategories(response.success);
+            if(response.success) {
+                setCategories(response.success);
+            } else {
+                setCategories([]);
+            }
         })
-    }, [])
+    }, [props.token])
 
     return (
         <div className="list-items">
         {
             categories.map((item, i) => (
-                <List key={i} name={item} />
+                <List token={props.token} key={i} name={item} />
             ))
         }
         </div>

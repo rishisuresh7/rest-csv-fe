@@ -17,7 +17,11 @@ const Table = (props) => {
     })
 
     useEffect(() => {
-        fetch(`/api/categories/${props.selected}`)
+        fetch(`/api/categories/${props.selected}`, {
+            headers: {
+                'Authorization': props.token,
+            }
+        })
         .then(response => response.json())
         .then(response => {
             if(response.success) {

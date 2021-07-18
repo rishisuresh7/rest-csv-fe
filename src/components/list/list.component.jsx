@@ -14,7 +14,10 @@ const List = (props) => {
     const handleAddClick = (category) => {
         fetch(`/api/categories/${category}`, {
             method: 'POST',
-            body: JSON.stringify([{id: ''}])
+            body: JSON.stringify([{id: ''}]),
+            headers: {
+                'Authorization': props.token,
+            }
         })
         .then(response => response.json())
         .then(() => {
@@ -31,8 +34,11 @@ const List = (props) => {
                 ...item
             }))
             fetch(`/api/categories/${category}`, {
-            method: 'PATCH',
-            body: JSON.stringify(payload)
+                method: 'PATCH',
+                body: JSON.stringify(payload),
+                headers: {
+                    'Authorization': props.token,
+                }
             })
             .then(response => response.json())
             .then(response => {
@@ -53,8 +59,11 @@ const List = (props) => {
     const handleDeleteClick = (category) => {
         if(selected.length !== 0) {
             fetch(`/api/categories/${category}`, {
-            method: 'DELETE',
-            body: JSON.stringify({ids: selected})
+                method: 'DELETE',
+                body: JSON.stringify({ids: selected}),
+                headers: {
+                    'Authorization': props.token,
+                }
             })
             .then(response => response.json())
             .then(() => {
@@ -109,7 +118,7 @@ const List = (props) => {
                 </Button>
             </AccordionActions>
             <AccordionDetails>
-                <Table selected={props.name} reRender={reRender} selectionModel={selected} handleSelected={handleSelected} setSelected={setSelected} />
+                <Table token={props.token} selected={props.name} reRender={reRender} selectionModel={selected} handleSelected={handleSelected} setSelected={setSelected} />
             </AccordionDetails>
         </Accordion>
     );
