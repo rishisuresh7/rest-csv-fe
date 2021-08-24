@@ -3,23 +3,17 @@ import Dropdown from '../dropdown/dropdown.component';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
-import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker
-} from "@material-ui/pickers";
-
-import './form.styles.scss';
 import CustomButton from '../button/button.component';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
+import "date-fns";
+import './form.styles.scss';
 
 const CustomForm = (props) => {
     const { id, ba_no, cms_in, cms_out, efc, engine_hours, kilometeres, series_inspection, sqn, tag_op, tm_1, tm_2, type, vehicle_type }
         = props.data || {};
-    const [value, setValue] = useState({
-        ba_no,
-        sqn,
-        type,
+    const initState = {
+        ba_no, sqn, type,
         tm_1 : tm_1 ? new Date(tm_1) : new Date(),
         tm_2 : tm_2 ? new Date(tm_2) : new Date(),
         cms_in : cms_in ? new Date(cms_in) : new Date(),
@@ -31,34 +25,60 @@ const CustomForm = (props) => {
         si: series_inspection,
         tag: tag_op,
         vt: vehicle_type
-    });
-    const buttonText = "Insert " + (props.formType === "categories" ? "Vehicle" : "Demand")
+    }
+    const [value, setValue] = useState(initState);
+    const buttonText = (props.isUpdate ? "Update " : "Insert ") + (props.formType === "categories" ? "Vehicle" : "Demand")
     const handleChange = (key, val) => {
         setValue({...value, [key]: val});
     }
     const parseDate = (date) => {
         return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
     }
-    
     const handleSubmit = () => {
         const {tm_1, tm_2, cms_in, cms_out} = value;
-        const postData = {...value,
-            tm_1: parseDate(tm_1),
-            tm_2: parseDate(tm_2),
-            cms_in: parseDate(cms_in),
-            cms_out: parseDate(cms_out),
-        };
-        fetch(`/api/${props.formType}`, {
-            method: props.isUpdate ? 'PATCH' : 'POST',
-            body: JSON.stringify([postData]),
-            headers: {
-                'Authorization': 'foobarbaz',
-            }
-        })
-        .then(response => response.json())
-        .then((response) => {
-            console.log(response);
-        })
+        if(value !== initState) {
+            const postData = {...value,
+                tm_1: parseDate(tm_1),
+                tm_2: parseDate(tm_2),
+                cms_in: parseDate(cms_in),
+                cms_out: parseDate(cms_out),
+            };
+            fetch(`/api/${props.formType}`, {
+                method: props.isUpdate ? 'PATCH' : 'POST',
+                body: JSON.stringify([postData]),
+                headers: {
+                    'Authorization': 'foobarbaz',
+                }
+            })
+            .then(response => response.json())
+            .then((response) => {
+                if(response.success) {
+                    props.setRerender(true);
+                    props.handleFormOpen(false);
+                }
+                props.setSnackState({
+                    ...props.snackState,
+                    open: true,
+                    message: response.success ? (( props.isUpdate ? 'Updated ' : 'Inserted ') + 'successfuly') : 'Some unexpected error happened',
+                    severity: response.success ? 'success' : 'error',
+                })
+            })
+            .catch(() => {
+                props.setSnackState({
+                    ...props.snackState,
+                    open: true,
+                    message: 'Some unexpected error happened',
+                    severity: 'error',
+                })
+            })
+        } else {
+            props.setSnackState({
+                ...props.snackState,
+                open: true,
+                message: `No change(s) to ${props.isUpdate ? 'update' : 'insert'}.`,
+                severity: 'error',
+            })
+        }
     }
 
     return (

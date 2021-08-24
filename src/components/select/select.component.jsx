@@ -12,6 +12,7 @@ const SelectComponent = (props) => {
     const handleBackCloseButton = () => {
         formOpen ?  setFormOpen(!formOpen) : setSelectedView('');
     }
+
     return (
         <div className="select-container">
             <div className="select-header">

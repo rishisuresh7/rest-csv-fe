@@ -4,11 +4,20 @@ import TextField from '@material-ui/core/TextField';
 import Table from '../table/table.component';
 import TableDetail from '../table/table-detail.component';
 import CustomButton from '../button/button.component';
-import './view.styles.scss';
 import CustomForm from '../form/form.component';
+import CustomSnackbar from '../snack-bar/snack-bar.component';
+import './view.styles.scss';
 
 const View = (props) => {
     const [selected, setSelected] = useState([]);
+    const [snackState, setSnackState] = useState({
+        open: false,
+        message: '',
+        severity: '',
+        onClose: () => {
+            setSnackState({...snackState, open: false})
+        }
+    });
     const [rerender, setRerender] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [rows, setRows] = useState([]);
@@ -18,6 +27,7 @@ const View = (props) => {
     }
     const handleDelete = () => {
         const deleteRows = selectedRows.map(item => parseInt(item.id));
+        console.log(deleteRows);
         fetch(`/api/categories`, {
             method: 'DELETE',
             body: JSON.stringify({ids: deleteRows}),
@@ -26,12 +36,33 @@ const View = (props) => {
             }
         })
         .then(response => response.json())
-        .then(() => {
-            setSelected([]);
-            setRerender(!rerender);
-            setSelectedRows([]);
+        .then((response) => {
+            if (response.success) {
+                setSelected([]);
+                setRerender(!rerender);
+                setSelectedRows([]);
+            }
+            setSnackState({
+                ...snackState,
+                open: true,
+                message: response.success ? 'Deleted successfuly' : 'Some unexpected error happened',
+                severity: response.success ? 'success' : 'error',
+            })
+        })
+        .catch(() => {
+            setSnackState({
+                ...snackState,
+                open: true,
+                message: 'Some unexpected error happened',
+                severity: 'error',
+            })
         })
     }
+
+    useEffect(() => {
+        setSelected([]);
+        setSelectedRows([]);
+    }, [rerender])
 
     useEffect(() => {
         fetch(`/api/${props.apiType}`, {
@@ -80,8 +111,9 @@ const View = (props) => {
 
     return (
         <div className="view-container">
+            <CustomSnackbar {...snackState} />
             {
-                props.formOpen ? <CustomForm isUpdate={selected.length > 0} data={rows.find(({id}) => selected.includes(id))} handleFormOpen={props.setFormOpen} formType={props.apiType} /> :
+                props.formOpen ? <CustomForm setRerender={setRerender} isUpdate={selected.length > 0} data={rows.find(({id}) => selected.includes(id))} handleFormOpen={props.setFormOpen} formType={props.apiType} snackState={snackState} setSnackState={setSnackState} /> :
                     <React.Fragment>
                         <div className="view-filters">
                             <Dropdown type="VEH" name="Vehicle Type" options={['A', 'B', 'OTHERS', 'ALL']}/>
