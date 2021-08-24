@@ -10,10 +10,10 @@ import "date-fns";
 import './form.styles.scss';
 
 const CustomForm = (props) => {
-    const { id, ba_no, cms_in, cms_out, efc, engine_hours, kilometeres, series_inspection, sqn, tag_op, tm_1, tm_2, type, vehicle_type }
-        = props.data || {};
+    const { id, ba_no, cms_in, cms_out, efc, engine_hours, kilometeres, series_inspection, sqn, tag_op, tm_1, tm_2,
+        type, vehicle_type, depot, status, equipment_demanded, control_number, demand_number } = props.data || {};
     const initState = {
-        ba_no, sqn, type,
+        ba_no, sqn, type, depot, status,
         tm_1 : tm_1 ? new Date(tm_1) : new Date(),
         tm_2 : tm_2 ? new Date(tm_2) : new Date(),
         cms_in : cms_in ? new Date(cms_in) : new Date(),
@@ -24,7 +24,10 @@ const CustomForm = (props) => {
         km: parseInt(kilometeres || 0),
         si: series_inspection,
         tag: tag_op,
-        vt: vehicle_type
+        vt: vehicle_type,
+        ed: equipment_demanded,
+        cn: control_number,
+        dn: demand_number
     }
     const [value, setValue] = useState(initState);
     const buttonText = (props.isUpdate ? "Update " : "Insert ") + (props.formType === "categories" ? "Vehicle" : "Demand")

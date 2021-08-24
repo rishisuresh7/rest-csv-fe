@@ -26,9 +26,8 @@ const View = (props) => {
         setSelectedRows(newRows);
     }
     const handleDelete = () => {
-        const deleteRows = selectedRows.map(item => parseInt(item.id));
-        console.log(deleteRows);
-        fetch(`/api/categories`, {
+        const deleteRows = selected.map(id => parseInt(id));
+        fetch(`/api/${props.apiType}`, {
             method: 'DELETE',
             body: JSON.stringify({ids: deleteRows}),
             headers: {
@@ -60,11 +59,9 @@ const View = (props) => {
     }
 
     useEffect(() => {
-        setSelected([]);
-        setSelectedRows([]);
-    }, [rerender])
-
-    useEffect(() => {
+        if (props.formOpen) {
+            return
+        }
         fetch(`/api/${props.apiType}`, {
             headers: {
                 'Authorization': "foobarbaz",
@@ -107,7 +104,7 @@ const View = (props) => {
                 setRows(rowData);
             }
         })
-    }, [props.apiType, rerender])
+    }, [props.formOpen, rerender])
 
     return (
         <div className="view-container">
@@ -122,15 +119,15 @@ const View = (props) => {
                         </div>
                         <div className="view-buttons">
                             {
-                                selectedRows.length <= 1 ? <CustomButton className="view-button" onClick={props.setFormOpen} color="primary" text={selectedRows.length ? "Modify" : "Add"} /> : null
+                                selected.length <= 1 ? <CustomButton className="view-button" onClick={props.setFormOpen} color="primary" text={selected.length ? "Modify" : "Add"} /> : null
                             }
                             {
-                                selectedRows.length ? <CustomButton className="view-button" onClick={handleDelete} color="secondary" text="Delete" /> : null
+                                selected.length ? <CustomButton className="view-button" onClick={handleDelete} color="secondary" text="Delete" /> : null
                             }
                         </div>
                         <div className="view-details">
                             <Table rows={rows} selectionModel={selected} handleSelected={handleSelected} setSelected={setSelected} />
-                            <TableDetail selectedRow = {selectedRows[selectedRows.length-1]} />
+                            <TableDetail selectedRow = {rows.find(item => selected.includes(item.id))} />
                         </div>
                     </React.Fragment>
             }
