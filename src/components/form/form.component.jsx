@@ -50,7 +50,7 @@ const CustomForm = (props) => {
                 method: props.isUpdate ? 'PATCH' : 'POST',
                 body: JSON.stringify([postData]),
                 headers: {
-                    'Authorization': 'foobarbaz',
+                    'Authorization': props.token,
                 }
             })
             .then(response => response.json())

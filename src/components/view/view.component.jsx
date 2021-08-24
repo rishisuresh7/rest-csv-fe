@@ -64,7 +64,7 @@ const View = (props) => {
         }
         fetch(`/api/${props.apiType}`, {
             headers: {
-                'Authorization': "foobarbaz",
+                'Authorization': props.token,
             }
         })
         .then(response => response.json())
@@ -110,7 +110,7 @@ const View = (props) => {
         <div className="view-container">
             <CustomSnackbar {...snackState} />
             {
-                props.formOpen ? <CustomForm setRerender={setRerender} isUpdate={selected.length > 0} data={rows.find(({id}) => selected.includes(id))} handleFormOpen={props.setFormOpen} formType={props.apiType} snackState={snackState} setSnackState={setSnackState} /> :
+                props.formOpen ? <CustomForm token={props.token} setRerender={setRerender} isUpdate={selected.length > 0} data={rows.find(({id}) => selected.includes(id))} handleFormOpen={props.setFormOpen} formType={props.apiType} snackState={snackState} setSnackState={setSnackState} /> :
                     <React.Fragment>
                         <div className="view-filters">
                             <Dropdown type="VEH" name="Vehicle Type" options={['A', 'B', 'OTHERS', 'ALL']}/>

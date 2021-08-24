@@ -27,14 +27,10 @@ function App() {
             render = { (props) => <LoginForm isLoggedIn={isLoggedIn} setToken={setToken} setIsLoggedIn={setIsLoggedIn} {...props}/>}
         />
         <Route
-          path = "/select"
-          render = { (props) => <SelectComponent {...props}/> }
-        />
-        <Route
               exact
-              path = "/categories"
+              path = "/select"
               render = {(props) => <AuthComponent {...props} isLoggedIn={isLoggedIn}>
-                  <ListItems token={token} />
+                  <SelectComponent {...props} token={token}/>
                 </AuthComponent>
               }
         />

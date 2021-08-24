@@ -6,7 +6,7 @@ import './select.styles.scss';
 const SelectComponent = (props) => {
     const [selectedView, setSelectedView] = useState('');
     const [formOpen, setFormOpen] = useState(false);
-    const handleClick = (val, props) => {
+    const handleClick = (val) => {
         val === "1" ? setSelectedView('display') : setSelectedView('demand');
     }
     const handleBackCloseButton = () => {
@@ -32,8 +32,8 @@ const SelectComponent = (props) => {
                     </div> :
                 null
             }
-            {selectedView === "display" ? <View formOpen={formOpen} setFormOpen={setFormOpen} type="display" apiType="categories" /> : null}
-            {selectedView === "demand" ? <View formOpen={formOpen} setFormOpen={setFormOpen} type="demand" apiType="demands" /> : null}
+            {selectedView === "display" ? <View token={props.token} formOpen={formOpen} setFormOpen={setFormOpen} type="display" apiType="categories" /> : null}
+            {selectedView === "demand" ? <View token={props.token} formOpen={formOpen} setFormOpen={setFormOpen} type="demand" apiType="demands" /> : null}
         </div>
     )
 }
