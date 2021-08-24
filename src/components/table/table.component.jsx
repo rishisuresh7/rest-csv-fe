@@ -3,8 +3,7 @@ import { DataGrid } from '@material-ui/data-grid';
 import './table.styles.scss';
 
 const Table = (props) => {
-    const [rows, setRows] = useState([]);
-    const fields = ["SNO", "ID", "BA NO", "CDR", "DRIVER", "OPER", "TM 1", "TM 2", "DEMAND", "FAULT", "REMARKS"]
+    const fields = ["SNO", "ID", "BA NO", "VEHICLE TYPE", "SQN"]
     const columns = fields.map((item, index) => {
         return {
             field: item.toLowerCase().replaceAll(' ', '_'),
@@ -16,40 +15,11 @@ const Table = (props) => {
         }
     })
 
-    useEffect(() => {
-        fetch(`/api/categories/${props.selected}`, {
-            headers: {
-                'Authorization': props.token,
-            }
-        })
-        .then(response => response.json())
-        .then(response => {
-            if(response.success) {
-                const rowData = response.success.map((row, index) => {
-                    return {
-                        sno: index+1,
-                        id: row[0],
-                        ba_no: row[1],
-                        cdr: row[2],
-                        driver: row[3],
-                        oper: row[4],
-                        tm_1: row[5],
-                        tm_2: row[6],
-                        demand: row[7],
-                        fault: row[8],
-                        remarks: row[9]
-                    }
-                })
-                setRows(rowData);
-            }
-        })
-    }, [props.reRender, props.selected])
-
     return (
     <div className="table">
         <DataGrid
             autoHeight
-            rows={rows}
+            rows={props.rows || []}
             columns={columns}
             loading={false}
             checkboxSelection

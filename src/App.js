@@ -4,6 +4,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import ListItems from './components/list/list-items.component';
 import LoginForm from './components/auth/login.component';
 import AuthComponent from './components/auth/auth.component';
+import SelectComponent from './components/select/select.component';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -24,6 +25,10 @@ function App() {
         <Route
             path = "/login"
             render = { (props) => <LoginForm isLoggedIn={isLoggedIn} setToken={setToken} setIsLoggedIn={setIsLoggedIn} {...props}/>}
+        />
+        <Route
+          path = "/select"
+          render = { (props) => <SelectComponent {...props}/> }
         />
         <Route
               exact

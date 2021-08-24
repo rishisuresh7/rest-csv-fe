@@ -35,7 +35,7 @@ const  LoginForm = (props) => {
   useEffect(() => {
     const data = sessionStorage.getItem('authentication');
     if(data && data !== '') {
-    props.history.push('/categories');
+    props.history.push('/select');
     }
   }, [])
 
@@ -68,7 +68,7 @@ const  LoginForm = (props) => {
             sessionStorage.setItem('authentication', response.success.authentication)
             props.setToken(response.success.authentication)
             props.setIsLoggedIn(true);
-            props.history.push('/categories');
+            props.history.push('/select');
         }
       })
   }
