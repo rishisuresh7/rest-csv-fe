@@ -7,6 +7,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
+import CustomSnackbar from '../snack-bar/snack-bar.component';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,6 +32,14 @@ const  LoginForm = (props) => {
     showPassword: false,
     authErr: '',
   });
+  const [snackState, setSnackState] = useState({
+    open: false,
+    message: '',
+    severity: '',
+    onClose: () => {
+        setSnackState({...snackState, open: false})
+    }
+  });
 
   useEffect(() => {
     const data = sessionStorage.getItem('authentication');
@@ -51,6 +60,21 @@ const  LoginForm = (props) => {
     event.preventDefault();
   };
 
+  const handleKeyPress = (e) => {
+    if (e.code === 'Enter') {
+      if (!values.password) {
+        setSnackState({
+          ...snackState,
+          open: true,
+          message: 'Please provide a password!',
+          severity: 'error',
+      })
+      return;
+      }
+      handleSubmit();
+    }
+  }
+
   const handleSubmit = () => {
       const { username, password } = values;
       fetch('/api/auth', {
@@ -59,6 +83,12 @@ const  LoginForm = (props) => {
       }).then(response => {
           if(response.status !== 200) {
             setValues({...values, authErr: 'Incorrect details!'})
+            setSnackState({
+              ...snackState,
+              open: true,
+              message: 'Incorrect details!',
+              severity: 'error',
+          })
           }
           return response.json()
         })
@@ -76,6 +106,7 @@ const  LoginForm = (props) => {
   return (
     <div className={classes.root}>
       <div>
+      <CustomSnackbar {...snackState} />
       <FormControl fullWidth className={classes.margin} variant="outlined">
           <InputLabel htmlFor="outlined-adornment-amount">{values.authErr === '' ? 'Username': 'Error'}</InputLabel>
           <OutlinedInput
@@ -94,6 +125,7 @@ const  LoginForm = (props) => {
             type={values.showPassword ? 'text' : 'password'}
             value={values.password}
             onChange={handleChange('password')}
+            onKeyPress={handleKeyPress}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
