@@ -18,12 +18,25 @@ const View = (props) => {
             setSnackState({...snackState, open: false})
         }
     });
+    const [search, setSearch] = useState({
+        veh: 'ALL',
+        sqn: 'ALL',
+        query: '',
+    });
     const [rerender, setRerender] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [rows, setRows] = useState([]);
+    const [filteredRows, setFilteredRows] = useState([]);
     const handleSelected = (isSelected, data) => {
         const newRows = isSelected ? [...selectedRows, data] : selectedRows.filter(({id}) => id !== data.id);
         setSelectedRows(newRows);
+    }
+    const handleChange = (prop, value) => {
+        setSearch({...search, [prop]: value})
+        if (prop === 'query') {
+            const data = value ? rows.filter(item => item.ba_no && item.ba_no.includes(value)) : rows;
+            setFilteredRows(data);
+        }
     }
     const handleDelete = () => {
         const deleteRows = selected.map(id => parseInt(id));
@@ -62,7 +75,7 @@ const View = (props) => {
         if (props.formOpen) {
             return
         }
-        fetch(`/api/${props.apiType}`, {
+        fetch(`/api/${props.apiType}?vehType=${search.veh}&squ=${search.sqn}`, {
             headers: {
                 'Authorization': props.token,
             }
@@ -102,9 +115,10 @@ const View = (props) => {
                     })
                 })
                 setRows(rowData);
+                setFilteredRows(rowData);
             }
         })
-    }, [props.formOpen, rerender])
+    }, [props.formOpen, rerender, search.veh, search.sqn])
 
     return (
         <div className="view-container">
@@ -113,9 +127,16 @@ const View = (props) => {
                 props.formOpen ? <CustomForm token={props.token} setRerender={setRerender} isUpdate={selected.length > 0} data={rows.find(({id}) => selected.includes(id))} handleFormOpen={props.setFormOpen} formType={props.apiType} snackState={snackState} setSnackState={setSnackState} /> :
                     <React.Fragment>
                         <div className="view-filters">
-                            <Dropdown type="VEH" name="Vehicle Type" options={['A', 'B', 'OTHERS', 'ALL']}/>
-                            <Dropdown type="SQN" name="Squadron" options={['A', 'B', 'C', 'HQ', 'ALL']}/>
-                            {props.type === "display" ? <TextField id="outlined-basic" label="Search" variant="outlined" /> : null}
+                            <Dropdown type="VEH" value={search.veh} propName="veh" handleChange={handleChange} name="Vehicle Type" options={['A', 'B', 'OTHERS', 'ALL']}/>
+                            <Dropdown type="SQN" value={search.sqn} propName="sqn" handleChange={handleChange} name="Squadron" options={['A', 'B', 'C', 'HQ', 'ALL']}/>
+                            {props.type === "display" ?
+                                <TextField
+                                    id="outlined-basic"
+                                    value={search.query}
+                                    onChange={(e) => handleChange('query', e.target.value)}
+                                    label="Search"
+                                    variant="outlined"
+                                /> : null}
                         </div>
                         <div className="view-buttons">
                             {
@@ -126,7 +147,7 @@ const View = (props) => {
                             }
                         </div>
                         <div className="view-details">
-                            <Table rows={rows} selectionModel={selected} handleSelected={handleSelected} setSelected={setSelected} />
+                            <Table rows={filteredRows} selectionModel={selected} handleSelected={handleSelected} setSelected={setSelected} />
                             <TableDetail selectedRow = {rows.find(item => selected.includes(item.id))} />
                         </div>
                     </React.Fragment>
