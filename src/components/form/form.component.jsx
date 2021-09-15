@@ -35,7 +35,7 @@ const CustomForm = (props) => {
         setValue({...value, [key]: val});
     }
     const parseDate = (date) => {
-        return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+        return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
     }
     const handleSubmit = () => {
         const {tm_1, tm_2, cms_in, cms_out} = value;
