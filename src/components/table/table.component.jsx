@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import { DataGrid } from '@material-ui/data-grid';
 import './table.styles.scss';
 
@@ -21,7 +21,7 @@ const Table = (props) => {
             autoHeight
             rows={props.rows || []}
             columns={columns}
-            loading={false}
+            loading={props.loading}
             checkboxSelection
             disableColumnMenu
             disableSelectionOnClick

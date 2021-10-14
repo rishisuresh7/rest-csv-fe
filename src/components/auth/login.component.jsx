@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux'
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
@@ -7,7 +8,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
-import CustomSnackbar from '../snack-bar/snack-bar.component';
+import { setSnackError } from '../snack-bar/snack-bar.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: 'wrap',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh',
+    height: '90vh',
     width: '90vw',
     padding: '0 3vw'
   },
@@ -31,14 +32,6 @@ const  LoginForm = (props) => {
     password: '',
     showPassword: false,
     authErr: '',
-  });
-  const [snackState, setSnackState] = useState({
-    open: false,
-    message: '',
-    severity: '',
-    onClose: () => {
-        setSnackState({...snackState, open: false})
-    }
   });
 
   useEffect(() => {
@@ -62,33 +55,23 @@ const  LoginForm = (props) => {
 
   const handleKeyPress = (e) => {
     if (e.code === 'Enter') {
-      if (!values.password) {
-        setSnackState({
-          ...snackState,
-          open: true,
-          message: 'Please provide a password!',
-          severity: 'error',
-      })
-      return;
-      }
       handleSubmit();
     }
   }
 
   const handleSubmit = () => {
       const { username, password } = values;
+      if (!password) {
+        props.setSnackError('Please enter details!')
+        return;
+      }
       fetch('/api/auth', {
         method: 'POST',
         body: JSON.stringify({username, password})
       }).then(response => {
           if(response.status !== 200) {
             setValues({...values, authErr: 'Incorrect details!'})
-            setSnackState({
-              ...snackState,
-              open: true,
-              message: 'Incorrect details!',
-              severity: 'error',
-          })
+            props.setSnackError('Incorrect details!')
           }
           return response.json()
         })
@@ -106,7 +89,6 @@ const  LoginForm = (props) => {
   return (
     <div className={classes.root}>
       <div>
-      <CustomSnackbar {...snackState} />
       <FormControl fullWidth className={classes.margin} variant="outlined">
           <InputLabel htmlFor="outlined-adornment-amount">{values.authErr === '' ? 'Username': 'Error'}</InputLabel>
           <OutlinedInput
@@ -149,4 +131,8 @@ const  LoginForm = (props) => {
   );
 }
 
-export default LoginForm;
+const mapDispatchToProps = (dispatch) => ({
+  setSnackError: (payload) => dispatch(setSnackError(payload))
+})
+
+export default connect(null, mapDispatchToProps)(LoginForm);

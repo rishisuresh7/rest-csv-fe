@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import { setSnackClose } from './snack-bar.actions';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,16 +16,25 @@ const useStyles = makeStyles((theme) => ({
 
 const CustomSnackbar = (props) => {
   const classes = useStyles();
+  const {open, message, severity} = props.snackState;
 
   return (
     <div className={classes.root}>
-      <Snackbar anchorOrigin={{vertical: 'bottom', horizontal: 'right'}} autoHideDuration={5000} {...props}>
-        <MuiAlert elevation={6} variant="filled" onClose={props.onClose} severity={props.severity} >
-            {props.message}
+      <Snackbar anchorOrigin={{vertical: 'bottom', horizontal: 'right'}} autoHideDuration={5000} open={open}>
+        <MuiAlert elevation={6} variant="filled" onClose={props.onClose} severity={severity} >
+            {message}
         </MuiAlert>
       </Snackbar>
     </div>
   );
 }
 
-export default CustomSnackbar;
+const mapStateToProps = (state) => ({
+  snackState: {...state.snackbar},
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onClose: () => dispatch(setSnackClose()),
+});
+
+export default  connect(mapStateToProps, mapDispatchToProps)(CustomSnackbar);

@@ -1,28 +1,24 @@
 import React, {useState, useEffect} from 'react';
+import {connect} from 'react-redux';
 import Dropdown from '../dropdown/dropdown.component';
 import TextField from '@material-ui/core/TextField';
 import Table from '../table/table.component';
 import TableDetail from '../table/table-detail.component';
 import CustomButton from '../button/button.component';
 import CustomForm from '../form/form.component';
-import CustomSnackbar from '../snack-bar/snack-bar.component';
+import AlertDialog from '../alert-dialog/alert-dialog.component';
+import { setSnackError, setSnackSuccess } from '../snack-bar/snack-bar.actions';
 import './view.styles.scss';
 
 const View = (props) => {
     const [selected, setSelected] = useState([]);
-    const [snackState, setSnackState] = useState({
-        open: false,
-        message: '',
-        severity: '',
-        onClose: () => {
-            setSnackState({...snackState, open: false})
-        }
-    });
+    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState({
         veh: 'ALL',
         sqn: 'ALL',
         query: '',
     });
+    const [open, setOpen] = useState(false);
     const [rerender, setRerender] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [rows, setRows] = useState([]);
@@ -51,24 +47,18 @@ const View = (props) => {
         .then((response) => {
             if (response.success) {
                 setSelected([]);
+                setLoading(true);
                 setRerender(!rerender);
                 setSelectedRows([]);
+                props.setSnackSuccess('Deleted successfuly');
+            } else {
+                props.setSnackError('Some unexpected error happened');
             }
-            setSnackState({
-                ...snackState,
-                open: true,
-                message: response.success ? 'Deleted successfuly' : 'Some unexpected error happened',
-                severity: response.success ? 'success' : 'error',
-            })
         })
         .catch(() => {
-            setSnackState({
-                ...snackState,
-                open: true,
-                message: 'Some unexpected error happened',
-                severity: 'error',
-            })
+            props.setSnackError('Some unexpected error happened');
         })
+        setOpen(false);
     }
 
     useEffect(() => {
@@ -80,7 +70,14 @@ const View = (props) => {
                 'Authorization': props.token,
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if(response.status === 200) {
+                return response.json()
+            } else {
+                setLoading(false);
+                props.setSnackError('Some unexpected error happened');
+            }
+        })
         .then(response => {
             if(response.success) {
                 const rowData = response.success.map((row, index) => {
@@ -116,19 +113,50 @@ const View = (props) => {
                 })
                 setRows(rowData);
                 setFilteredRows(rowData);
+                setLoading(false);
             }
         })
     }, [props.formOpen, rerender, search.veh, search.sqn])
 
     return (
         <div className="view-container">
-            <CustomSnackbar {...snackState} />
+            <AlertDialog
+                open={open}
+                title="Delete"
+                onClose={() => setOpen(false)}
+                confirmationText="Delete"
+                onConfirm={handleDelete}
+                text={`Are you sure you want to delete ${selected.length} record${ selected.length === 1 ? '' : 's'}?`} 
+            />
             {
-                props.formOpen ? <CustomForm token={props.token} setRerender={setRerender} isUpdate={selected.length > 0} data={rows.find(({id}) => selected.includes(id))} handleFormOpen={props.setFormOpen} formType={props.apiType} snackState={snackState} setSnackState={setSnackState} /> :
+                props.formOpen ?
+                    <CustomForm
+                        token={props.token}
+                        setRerender={setRerender}
+                        isUpdate={selected.length > 0}
+                        data={rows.find(({id}) => selected.includes(id))}
+                        handleFormOpen={props.setFormOpen}
+                        formType={props.apiType}
+                        setLoading={setLoading}
+                    /> :
                     <React.Fragment>
                         <div className="view-filters">
-                            <Dropdown type="VEH" value={search.veh} propName="veh" handleChange={handleChange} name="Vehicle Type" options={['A', 'B', 'OTHERS', 'ALL']}/>
-                            <Dropdown type="SQN" value={search.sqn} propName="sqn" handleChange={handleChange} name="Squadron" options={['A', 'B', 'C', 'HQ', 'ALL']}/>
+                            <Dropdown
+                                type="VEH"
+                                value={search.veh}
+                                propName="veh"
+                                handleChange={handleChange}
+                                name="Vehicle Type"
+                                options={['A', 'B', 'OTHERS', 'ALL']}
+                            />
+                            <Dropdown
+                                type="SQN"
+                                value={search.sqn}
+                                propName="sqn"
+                                handleChange={handleChange}
+                                name="Squadron"
+                                options={['A', 'B', 'C', 'HQ', 'ALL']}
+                            />
                             {props.type === "display" ?
                                 <TextField
                                     id="outlined-basic"
@@ -140,15 +168,37 @@ const View = (props) => {
                         </div>
                         <div className="view-buttons">
                             {
-                                selected.length <= 1 ? <CustomButton className="view-button" onClick={props.setFormOpen} color="primary" text={selected.length ? "Modify" : "Add"} /> : null
+                                selected.length <= 1 ?
+                                    <CustomButton
+                                        className="view-button"
+                                        onClick={props.setFormOpen}
+                                        color="primary"
+                                        text={selected.length ? "Modify" : "Add"}
+                                    /> :
+                                    null
                             }
                             {
-                                selected.length ? <CustomButton className="view-button" onClick={handleDelete} color="secondary" text="Delete" /> : null
+                                selected.length ?
+                                    <CustomButton
+                                        className="view-button"
+                                        onClick={() => setOpen(true)}
+                                        color="secondary"
+                                        text="Delete"
+                                    /> :
+                                    null
                             }
                         </div>
                         <div className="view-details">
-                            <Table rows={filteredRows} selectionModel={selected} handleSelected={handleSelected} setSelected={setSelected} />
-                            <TableDetail selectedRow = {rows.find(item => selected.includes(item.id))} />
+                            <Table
+                                rows={filteredRows}
+                                loading={loading}
+                                selectionModel={selected}
+                                handleSelected={handleSelected}
+                                setSelected={setSelected}
+                            />
+                            <TableDetail
+                                selectedRow = {rows.find(item => selected.includes(item.id))}
+                            />
                         </div>
                     </React.Fragment>
             }
@@ -156,4 +206,9 @@ const View = (props) => {
     )
 }
 
-export default View;
+const mapDispatchToProps = (dispatch) => ({
+    setSnackSuccess: (payload) => dispatch(setSnackSuccess(payload)),
+    setSnackError: (payload) => dispatch(setSnackError(payload)),
+});
+
+export default connect(null, mapDispatchToProps)(View);

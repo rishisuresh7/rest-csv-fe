@@ -15,15 +15,14 @@ const SelectComponent = (props) => {
 
     return (
         <div className="select-container">
-            <div className="select-header">
+            {/* <div className="select-header">
                 {
                     selectedView === '' ? null :
                         <span className="select-header-button">
                             <CustomButton variant="outlined"  text="Back" onClick={handleBackCloseButton} />
                         </span>
                 }
-                <h1>Invincible Management System</h1>
-            </div>
+            </div> */}
             {
                 selectedView === '' ?
                     <div className="select-buttons">
