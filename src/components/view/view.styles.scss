@@ -1,28 +1,19 @@
 .view-container {
     width: 100vw;
-    height: 90vh;
+    height: 80vh;
     position: relative;
-    top: 5vh;
+    top: 2vh;
 
-    .view-filters {
-        width: 100%;
+    .view-actions {
+        width: auto;
         height: 10%;
+        margin-left: 1%;
         display: flex;
         align-items: center;
         justify-content: space-evenly;
 
         #outlined-basic {
             width: 272px;
-        }
-    }
-
-    .view-buttons {
-        width: 90%;
-        justify-content: flex-end;
-        display: flex;
-
-        .view-button {
-            margin: 15px 10px 0 10px;
         }
     }
 

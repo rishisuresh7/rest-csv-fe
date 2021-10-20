@@ -5,22 +5,19 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
-        width: 300,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
-    },
-}));
-
 const Dropdown = (props) => {
+    const useStyles = makeStyles((theme) => ({
+        formControl: {
+            minWidth: 120,
+            width: props.fullWidth ? '100%' : 300,
+        },
+        selectEmpty: {
+            marginTop: theme.spacing(2),
+        },
+    }));
     const classes = useStyles();
 
     return (
-    <div>
         <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel id="demo-simple-select-outlined-label">{props.name}</InputLabel>
             <Select
@@ -38,7 +35,6 @@ const Dropdown = (props) => {
             }
             </Select>
         </FormControl>
-    </div>
     );
 }
 

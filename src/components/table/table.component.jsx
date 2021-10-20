@@ -3,7 +3,7 @@ import { DataGrid } from '@material-ui/data-grid';
 import './table.styles.scss';
 
 const Table = (props) => {
-    const fields = ["SNO", "ID", "BA NO", "VEHICLE TYPE", "SQN"]
+    const fields = ["SNO", "ID", "BA NO", "SQN", "TYPE"]
     const columns = fields.map((item, index) => {
         return {
             field: item.toLowerCase().replaceAll(' ', '_'),

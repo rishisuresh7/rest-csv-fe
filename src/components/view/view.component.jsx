@@ -8,13 +8,13 @@ import CustomButton from '../button/button.component';
 import CustomForm from '../form/form.component';
 import AlertDialog from '../alert-dialog/alert-dialog.component';
 import { setSnackError, setSnackSuccess } from '../snack-bar/snack-bar.actions';
+import { setFormClose, setFormOpen } from '../custom-tabs/custom-tabs.actions';
 import './view.styles.scss';
 
 const View = (props) => {
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState({
-        veh: 'ALL',
         sqn: 'ALL',
         query: '',
     });
@@ -62,10 +62,27 @@ const View = (props) => {
     }
 
     useEffect(() => {
-        if (props.formOpen) {
+        if (props.selectedTab.formOpen) {
             return
         }
-        fetch(`/api/${props.apiType}?vehType=${search.veh}&squ=${search.sqn}`, {
+        setSelected([]);
+        setSelectedRows([]);
+        setRows([]);
+        setFilteredRows([]);
+        setLoading(true);
+        const getVehicleName = (vehicleType) => {
+            if(vehicleType.includes('A')) {
+                return 'A'
+            } else if (vehicleType.includes('B')) {
+                return 'B'
+            } else if (vehicleType.toLowerCase() === "others") {
+                return 'OTHERS'
+            } else {
+                return 'ALL'
+            }
+        }
+        const selectedTab = props.selectedTab.name ? getVehicleName(props.selectedTab.name) : 'A';
+        props.token && fetch(`/api/${props.apiType}?vehType=${selectedTab}&squ=${search.sqn}`, {
             headers: {
                 'Authorization': props.token,
             }
@@ -79,7 +96,7 @@ const View = (props) => {
             }
         })
         .then(response => {
-            if(response.success) {
+            if(response && response.success) {
                 const rowData = response.success.map((row, index) => {
                     return (props.apiType !== "demands" ? {
                         sno: index+1,
@@ -116,7 +133,7 @@ const View = (props) => {
                 setLoading(false);
             }
         })
-    }, [props.formOpen, rerender, search.veh, search.sqn])
+    }, [props.token, rerender, props.selectedTab, search.sqn])
 
     return (
         <div className="view-container">
@@ -129,25 +146,31 @@ const View = (props) => {
                 text={`Are you sure you want to delete ${selected.length} record${ selected.length === 1 ? '' : 's'}?`} 
             />
             {
-                props.formOpen ?
+                props.selectedTab.formOpen ?
                     <CustomForm
                         token={props.token}
                         setRerender={setRerender}
                         isUpdate={selected.length > 0}
                         data={rows.find(({id}) => selected.includes(id))}
-                        handleFormOpen={props.setFormOpen}
-                        formType={props.apiType}
+                        handleFormOpen={props.setFormClose}
+                        formType={props.selectedTab.name === "Demands" ? "demands" : "categories"}
                         setLoading={setLoading}
                     /> :
                     <React.Fragment>
-                        <div className="view-filters">
-                            <Dropdown
-                                type="VEH"
-                                value={search.veh}
-                                propName="veh"
-                                handleChange={handleChange}
-                                name="Vehicle Type"
-                                options={['A', 'B', 'OTHERS', 'ALL']}
+                        <div className="view-actions">
+                            <CustomButton
+                                className="view-button"
+                                onClick={props.setFormOpen}
+                                color="primary"
+                                text={selected.length ? "Modify" : "Add"}
+                                disabled={selected.length > 1}
+                            />
+                            <CustomButton
+                                className="view-button"
+                                onClick={() => setOpen(true)}
+                                color="secondary"
+                                text="Delete"
+                                disabled={selected.length === 0}
                             />
                             <Dropdown
                                 type="SQN"
@@ -165,28 +188,6 @@ const View = (props) => {
                                     label="Search"
                                     variant="outlined"
                                 /> : null}
-                        </div>
-                        <div className="view-buttons">
-                            {
-                                selected.length <= 1 ?
-                                    <CustomButton
-                                        className="view-button"
-                                        onClick={props.setFormOpen}
-                                        color="primary"
-                                        text={selected.length ? "Modify" : "Add"}
-                                    /> :
-                                    null
-                            }
-                            {
-                                selected.length ?
-                                    <CustomButton
-                                        className="view-button"
-                                        onClick={() => setOpen(true)}
-                                        color="secondary"
-                                        text="Delete"
-                                    /> :
-                                    null
-                            }
                         </div>
                         <div className="view-details">
                             <Table
@@ -206,9 +207,15 @@ const View = (props) => {
     )
 }
 
+const mapStateToProps = state => ({
+    selectedTab: state.selectedTab,
+})
+
 const mapDispatchToProps = (dispatch) => ({
     setSnackSuccess: (payload) => dispatch(setSnackSuccess(payload)),
     setSnackError: (payload) => dispatch(setSnackError(payload)),
+    setFormOpen: () => dispatch(setFormOpen()),
+    setFormClose: () => dispatch(setFormClose()),
 });
 
-export default connect(null, mapDispatchToProps)(View);
+export default connect(mapStateToProps, mapDispatchToProps)(View);

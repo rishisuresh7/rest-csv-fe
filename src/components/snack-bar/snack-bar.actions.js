@@ -13,8 +13,8 @@ export const setSnackError = (message) => ({
 export const setSnackWarning = (message) => ({
     type: actionTypes.SET_SNACK_WARNING,
     payload: message,
-})
+});
 
 export const setSnackClose = () => ({
     type: actionTypes.SET_SNACK_CLOSE
-})
+});

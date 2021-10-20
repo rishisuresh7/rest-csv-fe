@@ -13,19 +13,29 @@ import './form.styles.scss';
 
 const CustomForm = (props) => {
     const { id, ba_no, cms_in, cms_out, efc, engine_hours, kilometeres, series_inspection, sqn, tag_op, tm_1, tm_2,
-        type, vehicle_type, depot, status, equipment_demanded, control_number, demand_number } = props.data || {};
+        type, depot, status, equipment_demanded, control_number, demand_number } = props.data || {};
+    const getVehileName = (vehicleName) => {
+        if(vehicleName.includes('A')) {
+            return 'A'
+        } else if(vehicleName.includes('B')) {
+            return 'B'
+        } else {
+            return 'OTHERS'
+        }
+    }
     const initState = {
-        ba_no, sqn, type, depot, status, efc,
+        ba_no, sqn, type, depot, status,
         tm_1 : tm_1 ? new Date(tm_1) : new Date(),
         tm_2 : tm_2 ? new Date(tm_2) : new Date(),
         cms_in : cms_in ? new Date(cms_in) : new Date(),
         cms_out : cms_out ? new Date(cms_out) : new Date(),
         id : parseInt(id || 0),
-        eh: engine_hours,
-        km: kilometeres,
+        eh: parseInt(engine_hours || 0),
+        km: parseInt(kilometeres || 0),
         si: series_inspection,
         tag: tag_op,
-        vt: vehicle_type,
+        efc: parseInt(efc || 0),
+        vt: props.selectedTab ? getVehileName(props.selectedTab) : 'A',
         ed: equipment_demanded,
         cn: control_number,
         dn: demand_number
@@ -37,10 +47,14 @@ const CustomForm = (props) => {
 
         for (i = 0, len = str.length; i < len; i++) {
           code = str.charCodeAt(i);
+          if (code === 32 ) {
+              continue;
+          }
           if (!(code > 47 && code < 58) && !(code > 64 && code < 91) && !(code > 96 && code < 123)) {
             return false;
           }
         }
+
         return true;
     };
     const handleChange = (key, val, validateField) => {
@@ -79,7 +93,7 @@ const CustomForm = (props) => {
             .then((response) => {
                 if(response.success) {
                     props.setRerender(true);
-                    props.handleFormOpen(false);
+                    props.handleFormOpen();
                     props.setLoading(true);
                     props.setSnackSuccess((props.isUpdate ? 'Updated ' : 'Inserted ') + 'successfuly');
                 } else {
@@ -97,7 +111,11 @@ const CustomForm = (props) => {
     return (
         <div className="forms-container">
             <Dropdown value={value.sqn} handleChange={handleChange} propName='sqn' setNone type="SQN" name="Squadron" options={['A', 'B', 'C', 'HQ']}/>
-            <Dropdown value={value.vt} handleChange={handleChange} propName='vt' setNone type="VEH" name="Vehicle Type" options={['A', 'B', 'OTHERS']}/>
+            {
+                props.formType !== "categories" ?
+                <Dropdown value={value.vt} handleChange={handleChange} propName='vt' setNone type="VEH" name="Vehicle Type" options={['A', 'B', 'OTHERS']}/> :
+                null
+            }
             <FormControl className="forms-text-field" variant="outlined">
                 <InputLabel htmlFor="component-outlined">BA Number</InputLabel>
                 <OutlinedInput id="component-outlined" value={value.ba_no} onChange={(e) => handleChange('ba_no', e.target.value, true)} label="BA Number" />
@@ -111,15 +129,15 @@ const CustomForm = (props) => {
                     <React.Fragment>
                         <FormControl className="forms-text-field" variant="outlined">
                             <InputLabel htmlFor="component-outlined">KM</InputLabel>
-                            <OutlinedInput type="number" id="component-outlined" value={value.km} onChange={(e) => handleChange('km', e.target.value)} label="KM" />
+                            <OutlinedInput type="number" id="component-outlined" value={value.km} onChange={(e) => handleChange('km', parseInt(e.target.value))} label="KM" />
                         </FormControl>
                         <FormControl className="forms-text-field" variant="outlined">
                             <InputLabel htmlFor="component-outlined">Engine Hours</InputLabel>
-                            <OutlinedInput type="number" id="component-outlined" value={value.eh} onChange={(e) => handleChange('eh', e.target.value)} label="Engine Hours" />
+                            <OutlinedInput type="number" id="component-outlined" value={value.eh} onChange={(e) => handleChange('eh', parseInt(e.target.value))} label="Engine Hours" />
                         </FormControl>
                         <FormControl className="forms-text-field" variant="outlined">
                             <InputLabel htmlFor="component-outlined">EFC</InputLabel>
-                            <OutlinedInput type="number" id="component-outlined" value={value.efc} onChange={(e) => handleChange('efc', e.target.value)} label="EFC" />
+                            <OutlinedInput type="number" id="component-outlined" value={value.efc} onChange={(e) => handleChange('efc', parseInt(e.target.value))} label="EFC" />
                         </FormControl>
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <KeyboardDatePicker
@@ -182,8 +200,8 @@ const CustomForm = (props) => {
                             <OutlinedInput id="component-outlined" value={value.si} onChange={(e) => handleChange('si', e.target.value, true)} label="Series Inspection" />
                         </FormControl>
                         <FormControl className="forms-text-field" variant="outlined">
-                            <InputLabel htmlFor="component-outlined">Tag/OP</InputLabel>
-                            <OutlinedInput id="component-outlined" value={value.tag} onChange={(e) => handleChange('tag', e.target.value, true)} label="Tag/OP" />
+                            <InputLabel htmlFor="component-outlined">TRG/OP</InputLabel>
+                            <OutlinedInput id="component-outlined" value={value.tag} onChange={(e) => handleChange('tag', e.target.value, true)} label="TRG/OP" />
                         </FormControl>
                     </React.Fragment> : 
                     <React.Fragment>
@@ -214,10 +232,14 @@ const CustomForm = (props) => {
     )
 }
 
+const mapStateToProps = state => ({
+    selectedTab: state.selectedTab.name,
+})
+
 const mapDispatchToProps = (dispatch) => ({
     setSnackError: (payload) => dispatch(setSnackError(payload)),
     setSnackSuccess: (payload) => dispatch(setSnackSuccess(payload)),
     setSnackClose: () => dispatch(setSnackClose())
 });
 
-export default connect(null, mapDispatchToProps)(CustomForm);
+export default connect(mapStateToProps, mapDispatchToProps)(CustomForm);

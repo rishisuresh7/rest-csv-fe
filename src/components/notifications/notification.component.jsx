@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import ListSubheader from '@mui/material/ListSubheader';
-import Dialog from '@mui/material/Dialog';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PopOver from '../pop-over/pop-over.component';
 
 const Notifications = (props) => {
   const [dispayItems, setDisplayItems] = useState([]);
@@ -14,8 +14,8 @@ const Notifications = (props) => {
   }, [props.items])
 
   return (
-    <Dialog onClose={props.onClose} open={props.open}>
-        <List 
+    <PopOver onClose={props.onClose} open={props.open}>
+      <List
             sx={{ width: 600, overflowX: 'hidden', maxWidth: 600, maxHeight: 600, bgcolor: 'background.paper' }}
             subheader={<ListSubheader><span style={{fontSize: 24, fontWeight: 'bolder'}}>Notifications</span></ListSubheader>}
             >
@@ -38,7 +38,7 @@ const Notifications = (props) => {
                     ]
             }
         </List>
-    </Dialog>
+    </PopOver>
   );
 }
 

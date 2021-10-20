@@ -6,7 +6,13 @@ const CustomButton = (props) => {
 
   return (
     <div className={className}>
-      <Button variant={ variant || "contained"} color={color} size={size || "medium"} onClick = {onClick} style={extraLarge ? {height: '60px', width: '150px'}: {}}>
+      <Button
+        disabled={props.disabled}
+        variant={ variant || "contained"}
+        color={color} size={size || "medium"}
+        onClick = {onClick}
+        style={extraLarge ? {height: '60px', width: '150px'}: {width: '100px'}}
+      >
         {text}
       </Button>
     </div>
