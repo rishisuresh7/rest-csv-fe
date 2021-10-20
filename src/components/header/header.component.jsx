@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -10,7 +10,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import AlertDialog from '../alert-dialog/alert-dialog.component';
 import {connect} from 'react-redux';
-import { setSnackSuccess } from '../snack-bar/snack-bar.actions';
+import { setSnackError, setSnackSuccess, setSnackWarning } from '../snack-bar/snack-bar.actions';
 import CreateAlert from '../create-alert/create-alert.component';
 import Notifications from '../full-screen-dialog/full-screen-dialog.component';
 
@@ -18,6 +18,31 @@ const Header = (props) => {
   const [open, setOpen] = useState(false);
   const [createAlertOpen, setCreateAlertOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notificationsCount, setNotificationsCount] = useState(0);
+
+  useEffect(() => {
+    if(props.isLoggedIn && !notificationsOpen && !props.formOpen && props.token != '') {
+      fetch('/api/notifications?type=count', {
+        headers: {
+          Authorization: props.token,
+        }
+      })
+      .then(resp => {
+        if (resp.status === 200) {
+          return resp.json();
+        } else {
+          throw new Error('Could not fetch notifications');
+        }
+      })
+      .then(response => {
+        setNotificationsCount(response.success);
+      })
+      .catch(() => {
+        props.setSnackWarning('Could not fetch notifications');
+      })
+    }
+  }, [props.isLoggedIn, notificationsOpen, props.formOpen]);
+
   const handleCloseDialog = () => {
     setOpen(false);
   }
@@ -40,12 +65,18 @@ const Header = (props) => {
     props.setIsLoggedIn(false);
     setOpen(false);
     props.history.push('/');
-    props.setSnackSucess('Logut Successful!')
+    props.setSnackSuccess('Logut Successful!')
   }
 
   return (
     <Fragment>
-      <Notifications open={ props.notificationItems.length !==0 && notificationsOpen} onClose={handleCloseNotifications}  />
+      <Notifications
+        open={ notificationsCount > 0 && notificationsOpen}
+        onClose={handleCloseNotifications}
+        token={props.token}
+        setSnackSuccess={props.setSnackSuccess}
+        setSnackError={props.setSnackError}
+      />
       <CreateAlert onClose={handleCloseCreateAlert} open={createAlertOpen} token={props.token} />
       <AlertDialog open={open} onClose={handleCloseDialog} confirmationText="Logout" title="Logout" text="Are you sure you want to logout?" onConfirm={() => handleLogout(props)} />
       <Box sx={{ flexGrow: 1, zIndex: 10 }}>
@@ -85,10 +116,15 @@ const Header = (props) => {
                       size="large"
                       sx={{height: 50, width: 50, color: 'white !important'}}
                       onMouseOver={handleMouseOver}
-                      onClick={()=> setNotificationsOpen(true)}
+                      onClick={()=> {
+                        if(!(notificationsCount > 0)) {
+                          props.setSnackWarning('No notifications to display!');
+                        }
+                        setNotificationsOpen(true);
+                      }}
                       aria-label="show new notifications"
                       >
-                      <Badge badgeContent={props.notificationItems.length} color="error">
+                      <Badge badgeContent={notificationsCount} color="error">
                           <NotificationsIcon />
                       </Badge>
                   </IconButton>
@@ -113,8 +149,14 @@ const Header = (props) => {
   );
 }
 
+const mapStateToProps = state => ({
+  formOpen: state.selectedTab.formOpen,
+})
+
 const mapDispatchToProps = (dispatch) => ({
-  setSnackSucess: (payload) => dispatch(setSnackSuccess(payload))
+  setSnackSuccess: (payload) => dispatch(setSnackSuccess(payload)),
+  setSnackError: (payload) => dispatch(setSnackError(payload)),
+  setSnackWarning: (payload) => dispatch(setSnackWarning(payload)),
 });
 
-export default connect(null, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

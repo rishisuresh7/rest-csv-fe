@@ -13,7 +13,6 @@ import { setSnackWarning } from './components/snack-bar/snack-bar.actions';
 function App(props) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState('');
-  const [notificationItems, setNotificationItems] = useState([]);
   useEffect(() => {
     const userToken = sessionStorage.getItem('authentication')
     if(userToken && userToken !== '')
@@ -22,33 +21,11 @@ function App(props) {
         setToken(userToken);
     }
   },[])
-  useEffect(() => {
-    if(isLoggedIn && token != '') {
-      fetch('/api/notifications', {
-        headers: {
-          Authorization: token,
-        }
-      })
-      .then(resp => {
-        if (resp.status === 200) {
-          return resp.json();
-        } else {
-          throw new Error('Could not fetch notifications');
-        }
-      })
-      .then(response => {
-        setNotificationItems(response.success);
-      })
-      .catch(() => {
-        props.setSnackWarning('Could not fetch notifications');
-      })
-    }
-  }, [isLoggedIn]);
 
   return (
     <div className="App">
       <CustomSnackbar />
-      <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} token={token} notificationItems={notificationItems} history={props.history} />
+      <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} token={token} history={props.history} />
       <Switch>
         <Redirect exact from='/' to='/login' />
         <Route
