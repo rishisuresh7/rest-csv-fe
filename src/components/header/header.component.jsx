@@ -9,6 +9,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import AlertDialog from '../alert-dialog/alert-dialog.component';
+import ImportExportIcon from '@mui/icons-material/ImportExport';
 import {connect} from 'react-redux';
 import { setSnackError, setSnackSuccess, setSnackWarning } from '../snack-bar/snack-bar.actions';
 import CreateAlert from '../create-alert/create-alert.component';
@@ -71,11 +72,12 @@ const Header = (props) => {
   return (
     <Fragment>
       <Notifications
-        open={ notificationsCount > 0 && notificationsOpen}
+        open={notificationsOpen}
         onClose={handleCloseNotifications}
         token={props.token}
         setSnackSuccess={props.setSnackSuccess}
         setSnackError={props.setSnackError}
+        setSnackWarning={props.setSnackWarning}
       />
       <CreateAlert onClose={handleCloseCreateAlert} open={createAlertOpen} token={props.token} />
       <AlertDialog open={open} onClose={handleCloseDialog} confirmationText="Logout" title="Logout" text="Are you sure you want to logout?" onConfirm={() => handleLogout(props)} />
@@ -103,7 +105,17 @@ const Header = (props) => {
                 <Fragment>
                   <IconButton
                       size="large"
-                      sx={{height: 50, width: 50, color: 'white !important'}}
+                      sx={{height: 50, width: 60, color: 'white !important'}}
+                      edge="end"
+                      aria-label="Import/Export data"
+                      aria-controls="primary-search-account-menu"
+                      onMouseOver={handleMouseOver}
+                  >
+                    <ImportExportIcon size="large" />
+                  </IconButton>
+                  <IconButton
+                      size="large"
+                      sx={{height: 50, width: 60, color: 'white !important'}}
                       edge="end"
                       aria-label="create alert"
                       aria-controls="primary-search-account-menu"
@@ -114,14 +126,9 @@ const Header = (props) => {
                   </IconButton>
                   <IconButton
                       size="large"
-                      sx={{height: 50, width: 50, color: 'white !important'}}
+                      sx={{height: 50, width: 60, color: 'white !important'}}
                       onMouseOver={handleMouseOver}
-                      onClick={()=> {
-                        if(!(notificationsCount > 0)) {
-                          props.setSnackWarning('No notifications to display!');
-                        }
-                        setNotificationsOpen(true);
-                      }}
+                      onClick={()=> setNotificationsOpen(true)}
                       aria-label="show new notifications"
                       >
                       <Badge badgeContent={notificationsCount} color="error">
@@ -130,7 +137,7 @@ const Header = (props) => {
                   </IconButton>
                   <IconButton
                       size="large"
-                      sx={{height: 50, width: 50, color: 'white !important'}}
+                      sx={{height: 50, width: 60, color: 'white !important'}}
                       edge="end"
                       aria-label="account of current user"
                       aria-controls="primary-search-account-menu"

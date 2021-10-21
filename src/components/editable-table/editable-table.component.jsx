@@ -83,11 +83,17 @@ const EditableTable = props => {
       })
       .then(resp => {
         let resultRows = [];
+        let activeIds = [];
         for(let i = 0; i < resp.success.length; i++) {
+          activeIds.push(resp.success[i].alertId);
           resultRows.push({...resp.success[i], id: resp.success[i].alertId, isEditMode: false});
+        }
+        if(!resultRows.length) {
+          props.setSnackWarning('No notifications to display!');
         }
         setInitRows(resultRows);
         setRows(resultRows);
+        props.setActiveAlerts(activeIds);
       })
       .catch((e) => {
         console.log(e)
