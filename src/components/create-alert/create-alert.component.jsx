@@ -4,6 +4,7 @@ import Dropdown from '../dropdown/dropdown.component';
 import PopOver from '../pop-over/pop-over.component';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
+import TextField from '@mui/material/TextField';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import './create-alert.styles.scss';
 import CustomButton from '../button/button.component';
@@ -16,6 +17,7 @@ const CreateAlert = props => {
         ba_number: '',
         lastValue: '',
         nextValue: '',
+        remarks: '',
     });
     useEffect(() => {
         setValues({
@@ -24,6 +26,7 @@ const CreateAlert = props => {
             ba_number: '',
             lastValue: '',
             nextValue: '',
+            remarks: '',
         });
     }, [props.open]);
 
@@ -53,6 +56,7 @@ const CreateAlert = props => {
                     ba_number: '',
                     lastValue: '',
                     nextValue: '',
+                    remarks: '',
                 })
             } else {
                 props.setSnackError('Unexpected error happened!');
@@ -78,7 +82,7 @@ const CreateAlert = props => {
                         <InputLabel htmlFor="component-outlined">BA Number</InputLabel>
                         <OutlinedInput id="component-outlined" value={values.ba_number} onChange={(e) => handleChange('ba_number', e.target.value)} label="BA Number" />
                     </FormControl>
-                    <Dropdown fullWidth value={values.fieldName} handleChange={handleChange} propName='fieldName' setNone name="TriggerField" options={['Kilometers', 'EFC']}/>
+                    <Dropdown fullWidth value={values.fieldName} handleChange={handleChange} propName='fieldName' setNone name="TriggerField" options={['Kilometers', 'EFC', 'TM 1', 'TM 2']}/>
                     <FormControl required fullWidth className="forms-text-field" variant="outlined">
                         <InputLabel htmlFor="component-outlined">Last Value</InputLabel>
                         <OutlinedInput id="component-outlined" value={values.lastValue} onChange={(e) => handleChange('lastValue', e.target.value)} label="Last Value" />
@@ -87,6 +91,14 @@ const CreateAlert = props => {
                         <InputLabel htmlFor="component-outlined">Next Value</InputLabel>
                         <OutlinedInput id="component-outlined" value={values.nextValue} onChange={(e) => handleChange('nextValue', e.target.value)} label="Next Value" />
                     </FormControl>
+                    <TextField
+                        id="outlined-multiline-static"
+                        label="Remarks"
+                        multiline
+                        rows={3}
+                        value={values.remarks}
+                        onChange={(e) => handleChange('remarks', e.target.value)}
+                    />
                 </div>
                 <div className="create-alert-container-button">
                     <CustomButton className="forms-submit-button" color="primary" size="large" text="Create" onClick={handleClick}/>

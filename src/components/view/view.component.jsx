@@ -113,7 +113,8 @@ const View = (props) => {
                         cms_in: row[10],
                         cms_out: row[11],
                         series_inspection: row[12],
-                        tag_op: row[13]
+                        trg_op: row[13],
+                        remarks: row[14]
                     } : {
                         sno: index + 1,
                         id : row[0],

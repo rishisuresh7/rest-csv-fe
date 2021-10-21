@@ -26,23 +26,31 @@ const useStyles = makeStyles(theme => ({
     width: 130,
     height: 40
   },
+  largeTableCell: {
+    height: 40,
+    width: 300,
+  },
   input: {
     width: 130,
+    height: 40
+  },
+  largeInput: {
+    width: 300,
     height: 40
   }
 }));
 
-const CustomTableCell = ({ row, name, onChange }) => {
+const CustomTableCell = ({ row, name, onChange, largeTableCell }) => {
   const classes = useStyles();
   const { isEditMode } = row;
   return (
-    <TableCell align="left" className={classes.tableCell}>
+    <TableCell align="left" className={largeTableCell ? classes.largeTableCell : classes.tableCell}>
       {isEditMode ? (
         <Input
           value={row[name]}
           name={name}
           onChange={e => onChange(e, row)}
-          className={classes.input}
+          className={largeTableCell ? classes.largeInput : classes.input}
         />
       ) : (
         row[name]
@@ -57,7 +65,8 @@ const EditableTable = props => {
     const [initRows, setInitRows] = useState([]);
     const [rerender, setRerender] = useState(false);
     const classes = useStyles();
-    const columns = [{name: 'Alert Name'}, {name: 'BA Number'}, {name: 'Vehicle Type'}, {name: 'Trigger Type'}, {name: 'Last Value'}, {name: 'Next Value'}];
+    const columns = [{name: 'Alert Name'}, {name: 'BA Number'}, {name: 'Vehicle Type'}, {name: 'Trigger Type'}, {name: 'Last Value'},
+                    {name: 'Next Value'}, {name: 'Vehicle Remarks'}, {name: 'Alert Remarks'}];
 
     useEffect(() => {
       fetch('/api/notifications', {
@@ -181,6 +190,8 @@ const EditableTable = props => {
                         <TableCell align="left" className={classes.tableCell}>{row["fieldName"]}</TableCell>
                         <CustomTableCell {...{ row, name: "lastValue", onChange }} />
                         <CustomTableCell {...{ row, name: "nextValue", onChange }} />
+                        <TableCell align="left" className={classes.largeTableCell}>{row["vehicleRemarks"]}</TableCell>
+                        <CustomTableCell {...{ row, name: "alertRemarks", onChange, largeTableCell: true }} />
                       </TableRow>
                     ))}
                 </TableBody>

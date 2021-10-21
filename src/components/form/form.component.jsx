@@ -6,6 +6,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import DateFnsUtils from "@date-io/date-fns";
 import CustomButton from '../button/button.component';
+import TextField from '@mui/material/TextField';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import "date-fns";
 import { setSnackError, setSnackSuccess, setSnackClose } from '../snack-bar/snack-bar.actions';
@@ -13,7 +14,7 @@ import './form.styles.scss';
 
 const CustomForm = (props) => {
     const { id, ba_no, cms_in, cms_out, efc, engine_hours, kilometeres, series_inspection, sqn, tag_op, tm_1, tm_2,
-        type, depot, status, equipment_demanded, control_number, demand_number } = props.data || {};
+        type, depot, status, equipment_demanded, control_number, demand_number, remarks } = props.data || {};
     const getVehileName = (vehicleName) => {
         if(vehicleName.includes('A')) {
             return 'A'
@@ -24,7 +25,7 @@ const CustomForm = (props) => {
         }
     }
     const initState = {
-        ba_no, sqn, type, depot, status,
+        ba_no, sqn, type, depot, status, remarks,
         tm_1 : tm_1 ? new Date(tm_1) : new Date(),
         tm_2 : tm_2 ? new Date(tm_2) : new Date(),
         cms_in : cms_in ? new Date(cms_in) : new Date(),
@@ -203,6 +204,15 @@ const CustomForm = (props) => {
                             <InputLabel htmlFor="component-outlined">TRG/OP</InputLabel>
                             <OutlinedInput id="component-outlined" value={value.tag} onChange={(e) => handleChange('tag', e.target.value, true)} label="TRG/OP" />
                         </FormControl>
+                        <TextField
+                            id="outlined-multiline-static"
+                            label="Remarks"
+                            multiline
+                            rows={4}
+                            sx={{width: 400}}
+                            value={value.remarks}
+                            onChange={(e) => handleChange('remarks', e.target.value)}
+                        />
                     </React.Fragment> : 
                     <React.Fragment>
                         <FormControl className="forms-text-field" variant="outlined">

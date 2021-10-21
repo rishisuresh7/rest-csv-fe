@@ -94,7 +94,7 @@ const Header = (props) => {
                   cursor: "pointer",
               }}}
             >
-              Invincible Management System
+              INVINCIBLE MANAGEMENT SYSTEM
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
             <Box>
