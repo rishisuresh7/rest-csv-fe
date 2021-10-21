@@ -10,6 +10,7 @@ const Dropdown = (props) => {
         formControl: {
             minWidth: 120,
             width: props.fullWidth ? '100%' : 300,
+            margin: theme.spacing(props.spacing),
         },
         selectEmpty: {
             marginTop: theme.spacing(2),

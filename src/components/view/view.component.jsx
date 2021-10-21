@@ -11,6 +11,18 @@ import { setSnackError, setSnackSuccess } from '../snack-bar/snack-bar.actions';
 import { setFormClose, setFormOpen } from '../custom-tabs/custom-tabs.actions';
 import './view.styles.scss';
 
+const getVehicleName = (vehicleType) => {
+    if(vehicleType.includes('A')) {
+        return 'A'
+    } else if (vehicleType.includes('B')) {
+        return 'B'
+    } else if (vehicleType.toLowerCase() === "others") {
+        return 'OTHERS'
+    } else {
+        return 'ALL'
+    }
+}
+
 const View = (props) => {
     const [selected, setSelected] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -70,18 +82,8 @@ const View = (props) => {
         setRows([]);
         setFilteredRows([]);
         setLoading(true);
-        const getVehicleName = (vehicleType) => {
-            if(vehicleType.includes('A')) {
-                return 'A'
-            } else if (vehicleType.includes('B')) {
-                return 'B'
-            } else if (vehicleType.toLowerCase() === "others") {
-                return 'OTHERS'
-            } else {
-                return 'ALL'
-            }
-        }
         const selectedTab = props.selectedTab.name ? getVehicleName(props.selectedTab.name) : 'A';
+
         props.token && fetch(`/api/${props.apiType}?vehType=${selectedTab}&squ=${search.sqn}`, {
             headers: {
                 'Authorization': props.token,
@@ -112,9 +114,11 @@ const View = (props) => {
                         tm_2: row[9],
                         cms_in: row[10],
                         cms_out: row[11],
-                        series_inspection: row[12],
-                        trg_op: row[13],
-                        remarks: row[14]
+                        workshop_in: row[12],
+                        workshop_out: row[13],
+                        series_inspection: row[14],
+                        trg_op: row[15],
+                        remarks: row[16]
                     } : {
                         sno: index + 1,
                         id : row[0],
@@ -135,6 +139,23 @@ const View = (props) => {
             }
         })
     }, [props.token, rerender, props.selectedTab, search.sqn])
+
+    const filterData = (row) => {
+        const newRow = {...row};
+        const isVehicleA = getVehicleName(props.selectedTab.name) === 'A';
+        if(isVehicleA) {
+            delete newRow['workshop_in'];
+            delete newRow['workshop_out'];
+        } else {
+            delete newRow['tm_1'];
+            delete newRow['tm_2'];
+            delete newRow['efc'];
+            delete newRow['series_inspection'];
+            delete newRow['trg_op'];
+        }
+
+        return newRow;
+    }
 
     return (
         <div className="view-container">
@@ -199,7 +220,7 @@ const View = (props) => {
                                 setSelected={setSelected}
                             />
                             <TableDetail
-                                selectedRow = {rows.find(item => selected.includes(item.id))}
+                                selectedRow = {filterData(rows.find(item => selected.includes(item.id)))}
                             />
                         </div>
                     </React.Fragment>

@@ -12,22 +12,25 @@ import "date-fns";
 import { setSnackError, setSnackSuccess, setSnackClose } from '../snack-bar/snack-bar.actions';
 import './form.styles.scss';
 
+const getVehicleName = (vehicleName) => {
+    if(vehicleName.includes('A')) {
+        return 'A'
+    } else if(vehicleName.includes('B')) {
+        return 'B'
+    } else {
+        return 'OTHERS'
+    }
+}
+
 const CustomForm = (props) => {
     const { id, ba_no, cms_in, cms_out, efc, engine_hours, kilometeres, series_inspection, sqn, tag_op, tm_1, tm_2,
-        type, depot, status, equipment_demanded, control_number, demand_number, remarks } = props.data || {};
-    const getVehileName = (vehicleName) => {
-        if(vehicleName.includes('A')) {
-            return 'A'
-        } else if(vehicleName.includes('B')) {
-            return 'B'
-        } else {
-            return 'OTHERS'
-        }
-    }
+        type, depot, status, equipment_demanded, control_number, demand_number, remarks, workshop_in, workshop_out } = props.data || {};
     const initState = {
         ba_no, sqn, type, depot, status, remarks,
         tm_1 : tm_1 ? new Date(tm_1) : new Date(),
         tm_2 : tm_2 ? new Date(tm_2) : new Date(),
+        workshop_in: workshop_in ? new Date(workshop_in) : new Date(),
+        workshop_out: workshop_out ? new Date(workshop_out) : new Date(),
         cms_in : cms_in ? new Date(cms_in) : new Date(),
         cms_out : cms_out ? new Date(cms_out) : new Date(),
         id : parseInt(id || 0),
@@ -36,16 +39,16 @@ const CustomForm = (props) => {
         si: series_inspection,
         tag: tag_op,
         efc: parseInt(efc || 0),
-        vt: props.selectedTab ? getVehileName(props.selectedTab) : 'A',
+        vt: props.selectedTab ? getVehicleName(props.selectedTab) : 'A',
         ed: equipment_demanded,
         cn: control_number,
         dn: demand_number
     }
     const [value, setValue] = useState(initState);
     const buttonText = (props.isUpdate ? "Update " : "Insert ") + (props.formType === "categories" ? "Vehicle" : "Demand");
+
     const isAlphaNumeric = (str) => {
         let code, i, len;
-
         for (i = 0, len = str.length; i < len; i++) {
           code = str.charCodeAt(i);
           if (code === 32 ) {
@@ -58,6 +61,7 @@ const CustomForm = (props) => {
 
         return true;
     };
+
     const handleChange = (key, val, validateField) => {
         let localValue = val;
         props.setSnackClose();
@@ -71,15 +75,20 @@ const CustomForm = (props) => {
         }
         setValue({...value, [key]: localValue});
     }
+
     const parseDate = (date) => {
         return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
     }
+
     const handleSubmit = () => {
-        const {tm_1, tm_2, cms_in, cms_out} = value;
+        const isVehicleA = getVehicleName(props.selectedTab) === 'A';
+        const {tm_1, tm_2, cms_in, cms_out, workshop_in, workshop_out} = value;
         if(value !== initState) {
             const postData = {...value,
-                tm_1: parseDate(tm_1),
-                tm_2: parseDate(tm_2),
+                tm_1: isVehicleA ? parseDate(tm_1) : '',
+                tm_2: isVehicleA ? parseDate(tm_2) : '',
+                workshop_in: !isVehicleA ? parseDate(workshop_in) : '',
+                workshop_out: !isVehicleA ? parseDate(workshop_out) : '',
                 cms_in: parseDate(cms_in),
                 cms_out: parseDate(cms_out),
             };
@@ -111,7 +120,7 @@ const CustomForm = (props) => {
 
     return (
         <div className="forms-container">
-            <Dropdown value={value.sqn} handleChange={handleChange} propName='sqn' setNone type="SQN" name="Squadron" options={['A', 'B', 'C', 'HQ']}/>
+            <Dropdown spacing={1} value={value.sqn} handleChange={handleChange} propName='sqn' setNone type="SQN" name="Squadron" options={['A', 'B', 'C', 'HQ']}/>
             {
                 props.formType !== "categories" ?
                 <Dropdown value={value.vt} handleChange={handleChange} propName='vt' setNone type="VEH" name="Vehicle Type" options={['A', 'B', 'OTHERS']}/> :
@@ -136,38 +145,81 @@ const CustomForm = (props) => {
                             <InputLabel htmlFor="component-outlined">Engine Hours</InputLabel>
                             <OutlinedInput type="number" id="component-outlined" value={value.eh} onChange={(e) => handleChange('eh', parseInt(e.target.value))} label="Engine Hours" />
                         </FormControl>
-                        <FormControl className="forms-text-field" variant="outlined">
-                            <InputLabel htmlFor="component-outlined">EFC</InputLabel>
-                            <OutlinedInput type="number" id="component-outlined" value={value.efc} onChange={(e) => handleChange('efc', parseInt(e.target.value))} label="EFC" />
-                        </FormControl>
-                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <KeyboardDatePicker
-                                margin="normal"
-                                id="date-picker-dialog"
-                                className="forms-text-field"
-                                label="TM 1 Date"
-                                format="dd/MM/yyyy"
-                                value={value.tm_1}
-                                onChange={(e) => handleChange('tm_1', e)}
-                                KeyboardButtonProps={{
-                                "aria-label": "change date"
-                                }}
-                            />
-                        </MuiPickersUtilsProvider>
-                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <KeyboardDatePicker
-                                margin="normal"
-                                id="date-picker-dialog"
-                                className="forms-text-field"
-                                label="TM 2 Date"
-                                format="dd/MM/yyyy"
-                                value={value.tm_2}
-                                onChange={(e) => handleChange('tm_2', e)}
-                                KeyboardButtonProps={{
-                                "aria-label": "change date"
-                                }}
-                            />
-                        </MuiPickersUtilsProvider>
+                        {
+                            getVehicleName(props.selectedTab) === 'A' ?
+                                <>
+                                    <FormControl className="forms-text-field" variant="outlined">
+                                        <InputLabel htmlFor="component-outlined">EFC</InputLabel>
+                                        <OutlinedInput type="number" id="component-outlined" value={value.efc} onChange={(e) => handleChange('efc', parseInt(e.target.value))} label="EFC" />
+                                    </FormControl>
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <KeyboardDatePicker
+                                            margin="normal"
+                                            id="date-picker-dialog"
+                                            className="forms-text-field"
+                                            label="TM 1 Date"
+                                            format="dd/MM/yyyy"
+                                            value={value.tm_1}
+                                            onChange={(e) => handleChange('tm_1', e)}
+                                            KeyboardButtonProps={{
+                                            "aria-label": "change date"
+                                            }}
+                                        />
+                                    </MuiPickersUtilsProvider>
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <KeyboardDatePicker
+                                            margin="normal"
+                                            id="date-picker-dialog"
+                                            className="forms-text-field"
+                                            label="TM 2 Date"
+                                            format="dd/MM/yyyy"
+                                            value={value.tm_2}
+                                            onChange={(e) => handleChange('tm_2', e)}
+                                            KeyboardButtonProps={{
+                                            "aria-label": "change date"
+                                            }}
+                                        />
+                                    </MuiPickersUtilsProvider>
+                                    <FormControl className="forms-text-field" variant="outlined">
+                                        <InputLabel htmlFor="component-outlined">Series Inspection</InputLabel>
+                                        <OutlinedInput id="component-outlined" value={value.si} onChange={(e) => handleChange('si', e.target.value, true)} label="Series Inspection" />
+                                    </FormControl>
+                                    <FormControl className="forms-text-field" variant="outlined">
+                                        <InputLabel htmlFor="component-outlined">TRG/OP</InputLabel>
+                                        <OutlinedInput id="component-outlined" value={value.tag} onChange={(e) => handleChange('tag', e.target.value, true)} label="TRG/OP" />
+                                    </FormControl>
+                                </> :
+                                <>
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <KeyboardDatePicker
+                                            margin="normal"
+                                            id="date-picker-dialog"
+                                            className="forms-text-field"
+                                            label="Workshop In Date"
+                                            format="dd/MM/yyyy"
+                                            value={value.workshop_in}
+                                            onChange={(e) => handleChange('workshop_in', e)}
+                                            KeyboardButtonProps={{
+                                            "aria-label": "change date"
+                                            }}
+                                        />
+                                    </MuiPickersUtilsProvider>
+                                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                        <KeyboardDatePicker
+                                            margin="normal"
+                                            id="date-picker-dialog"
+                                            className="forms-text-field"
+                                            label="Workshop Out Date"
+                                            format="dd/MM/yyyy"
+                                            value={value.workshop_out}
+                                            onChange={(e) => handleChange('workshop_out', e)}
+                                            KeyboardButtonProps={{
+                                            "aria-label": "change date"
+                                            }}
+                                        />
+                                    </MuiPickersUtilsProvider>
+                                </>
+                        }
                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                             <KeyboardDatePicker
                                 margin="normal"
@@ -196,14 +248,6 @@ const CustomForm = (props) => {
                                 }}
                             />
                         </MuiPickersUtilsProvider>
-                        <FormControl className="forms-text-field" variant="outlined">
-                            <InputLabel htmlFor="component-outlined">Series Inspection</InputLabel>
-                            <OutlinedInput id="component-outlined" value={value.si} onChange={(e) => handleChange('si', e.target.value, true)} label="Series Inspection" />
-                        </FormControl>
-                        <FormControl className="forms-text-field" variant="outlined">
-                            <InputLabel htmlFor="component-outlined">TRG/OP</InputLabel>
-                            <OutlinedInput id="component-outlined" value={value.tag} onChange={(e) => handleChange('tag', e.target.value, true)} label="TRG/OP" />
-                        </FormControl>
                         <TextField
                             id="outlined-multiline-static"
                             label="Remarks"
