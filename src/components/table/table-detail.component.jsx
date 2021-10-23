@@ -7,13 +7,13 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import './table-detail.styles.scss';
 
-const TableDetail = ({selectedRow}) => {
-    const rows = [];
-    for( let key in selectedRow) {
-        if (key != 'id') {
-            rows.push({key, value: selectedRow[key]})
+const TableDetail = ({selectedRow, keys}) => {
+    const rows = keys.map(key => {
+        return {
+            key: key.label,
+            value: selectedRow[key.value],
         }
-    }
+    });
 
     return (
         <div className="table-detail-container">
@@ -21,12 +21,14 @@ const TableDetail = ({selectedRow}) => {
                 <Table aria-label="simple table">
                     <TableBody>
                     {
-                        rows.map((row) => (
-                            <TableRow key={row.name}>
-                                <TableCell component="th" scope="row">{row.key.toUpperCase()}</TableCell>
-                                <TableCell style={{backgroundColor: 'azure'}} align="right">{row.value}</TableCell>
-                            </TableRow>
-                        ))
+                        selectedRow.id ?
+                            rows.map((row) => (
+                                <TableRow key={row.name}>
+                                    <TableCell component="th" scope="row">{row.key.toUpperCase()}</TableCell>
+                                    <TableCell style={{backgroundColor: 'azure'}} align="right">{row.value}</TableCell>
+                                </TableRow>
+                            )) :
+                            null
                     }
                     </TableBody>
                 </Table>

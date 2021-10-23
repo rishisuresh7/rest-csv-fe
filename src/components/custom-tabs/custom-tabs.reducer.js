@@ -1,6 +1,6 @@
 import { SELECT_TAB, SET_FORM_OPEN, SET_FORM_CLOSE } from "./custom-tabs-types";
 
-export const customTabsReducer = (state = { value: 0, name: 'Vehicle A', formOpen: false}, action) => {
+export const customTabsReducer = (state = { value: 0, name: 'A Vehicle', formOpen: false}, action) => {
     switch (action.type) {
         case SELECT_TAB:
             return {...state, ...action.payload}

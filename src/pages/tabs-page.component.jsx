@@ -8,7 +8,7 @@ const TabsPage = (props) => {
     return (
         <div className="tabs-page-container">
             <ScrollableTabs token={props.token} />
-            <View token={props.token} type="display" apiType={ props.selectedTab === "Demands" ? "demands" : "categories"} />
+            <View token={props.token} type="display" apiType={ props.selectedTab === "Demands" ? "demands" : "vehicles"} />
         </div>
     )
 }

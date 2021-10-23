@@ -3,15 +3,13 @@ import { DataGrid } from '@material-ui/data-grid';
 import './table.styles.scss';
 
 const Table = (props) => {
-    const fields = ["SNO", "ID", "BA NO", "SQN", "TYPE"]
-    const columns = fields.map((item, index) => {
+    const columns = props.headers.map(({label, value, width}, index) => {
         return {
-            field: item.toLowerCase().replaceAll(' ', '_'),
-            headerName: item.toUpperCase(),
-            editable: index === 0 ? false : true,
+            field: value,
+            headerName: label.toUpperCase(),
+            editable: false,
             sortable: false,
-            width: index === 0 ? 70: 150,
-            hide: index === 1 ? true : false,
+            width: width || 80,
         }
     })
 

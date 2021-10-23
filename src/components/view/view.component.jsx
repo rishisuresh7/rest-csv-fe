@@ -9,19 +9,8 @@ import CustomForm from '../form/form.component';
 import AlertDialog from '../alert-dialog/alert-dialog.component';
 import { setSnackError, setSnackSuccess } from '../snack-bar/snack-bar.actions';
 import { setFormClose, setFormOpen } from '../custom-tabs/custom-tabs.actions';
+import * as utility from '../utility/utility';
 import './view.styles.scss';
-
-const getVehicleName = (vehicleType) => {
-    if(vehicleType.includes('A')) {
-        return 'A'
-    } else if (vehicleType.includes('B')) {
-        return 'B'
-    } else if (vehicleType.toLowerCase() === "others") {
-        return 'OTHERS'
-    } else {
-        return 'ALL'
-    }
-}
 
 const View = (props) => {
     const [selected, setSelected] = useState([]);
@@ -77,14 +66,15 @@ const View = (props) => {
         if (props.selectedTab.formOpen) {
             return
         }
+        if(!props.selectedTab.name) {
+            return
+        }
         setSelected([]);
         setSelectedRows([]);
         setRows([]);
         setFilteredRows([]);
         setLoading(true);
-        const selectedTab = props.selectedTab.name ? getVehicleName(props.selectedTab.name) : 'A';
-
-        props.token && fetch(`/api/${props.apiType}?vehType=${selectedTab}&squ=${search.sqn}`, {
+        props.token && fetch(`/api${utility.getAPIRoute(props.selectedTab.name, {squ: search.sqn, search: search.query})}`, {
             headers: {
                 'Authorization': props.token,
             }
@@ -99,40 +89,7 @@ const View = (props) => {
         })
         .then(response => {
             if(response && response.success) {
-                const rowData = response.success.map((row, index) => {
-                    return (props.apiType !== "demands" ? {
-                        sno: index+1,
-                        id: row[0],
-                        sqn: row[1],
-                        vehicle_type: row[2],
-                        ba_no: row[3],   
-                        type: row[4],
-                        kilometeres: row[5],
-                        engine_hours: row[6],
-                        efc: row[7],
-                        tm_1: row[8],
-                        tm_2: row[9],
-                        cms_in: row[10],
-                        cms_out: row[11],
-                        workshop_in: row[12],
-                        workshop_out: row[13],
-                        series_inspection: row[14],
-                        trg_op: row[15],
-                        remarks: row[16]
-                    } : {
-                        sno: index + 1,
-                        id : row[0],
-                        sqn: row[1],
-                        vehicle_type: row[2],
-                        ba_no: row[3],
-                        type: row[4],
-                        equipment_demanded: row[5],
-                        depot: row[6],
-                        demand_number: row[7],
-                        control_number: row[8],
-                        status: row[9]
-                    })
-                })
+                const rowData = utility.getFormattedRows(props.selectedTab.name, response.success);
                 setRows(rowData);
                 setFilteredRows(rowData);
                 setLoading(false);
@@ -140,23 +97,8 @@ const View = (props) => {
         })
     }, [props.token, rerender, props.selectedTab, search.sqn])
 
-    const filterData = (row) => {
-        const newRow = {...row};
-        const isVehicleA = getVehicleName(props.selectedTab.name) === 'A';
-        if(isVehicleA) {
-            delete newRow['workshop_in'];
-            delete newRow['workshop_out'];
-        } else {
-            delete newRow['tm_1'];
-            delete newRow['tm_2'];
-            delete newRow['efc'];
-            delete newRow['series_inspection'];
-            delete newRow['trg_op'];
-        }
-
-        return newRow;
-    }
-
+    const selectedDetails = utility.getHeaders(props.selectedTab.name);
+    const checkedRow = rows.find(item => selected.includes(item.id)) || {};
     return (
         <div className="view-container">
             <AlertDialog
@@ -213,6 +155,7 @@ const View = (props) => {
                         </div>
                         <div className="view-details">
                             <Table
+                                headers={selectedDetails.headers}
                                 rows={filteredRows}
                                 loading={loading}
                                 selectionModel={selected}
@@ -220,7 +163,8 @@ const View = (props) => {
                                 setSelected={setSelected}
                             />
                             <TableDetail
-                                selectedRow = {filterData(rows.find(item => selected.includes(item.id)))}
+                                keys={[...selectedDetails.headers, ...selectedDetails.selectedRowKeys]}
+                                selectedRow = {checkedRow}
                             />
                         </div>
                     </React.Fragment>
