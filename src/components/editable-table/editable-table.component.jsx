@@ -104,7 +104,7 @@ const EditableTable = props => {
     const handleSave = (row, id) => {
       const initialRow = initRows.filter(item => item.id === id)[0];
       if(!(initialRow.lastValue === row.lastValue && initialRow.nextValue === row.nextValue)) {
-        fetch('/api/alerts', {
+        fetch('/api/notifications', {
           method: 'PATCH',
           body: JSON.stringify(row),
           headers: {

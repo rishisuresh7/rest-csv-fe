@@ -12,7 +12,7 @@ export const getHeaders = (selectedTab ) => {
             return {
                 headers: [
                     {label: 'Sl No.', value: 'sno'},
-                    {label: 'BA No.', value: 'baNumber', width: 100},
+                    {label: 'BA No.', value: 'baNumber', width: 130},
                     {label: 'Squadron', value: 'squadron', width: 130, type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
                     {label: 'Type', value: 'type'},
                     {label: 'Vehicle Type', value: 'vehicleType', width: 140},
@@ -40,7 +40,7 @@ export const getHeaders = (selectedTab ) => {
             return {
                 headers: [
                     {label: 'Sl No.', value: 'sno'},
-                    {label: 'BA No.', value: 'baNumber', width: 100},
+                    {label: 'BA No.', value: 'baNumber', width: 130},
                     {label: 'Squadron', value: 'squadron', width: 130, type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
                     {label: 'Type', value: 'type'},
                     {label: 'Vehicle Type', value: 'vehicleType', width: 140},
@@ -58,7 +58,7 @@ export const getHeaders = (selectedTab ) => {
             return {
                 headers: [
                     {label: 'Sl No.', value: 'sno'},
-                    {label: 'BA No.', value: 'baNumber', width: 100},
+                    {label: 'BA No.', value: 'baNumber', width: 130},
                     {label: 'Squadron', value: 'squadron', width: 130, type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
                     {label: 'Vehicle Type', value: 'vehicleType', width: 140, type: 'dropdown', options: ['A', 'B']},
                 ],
