@@ -286,9 +286,6 @@ const CustomForm = (props) => {
     )
 }
 
-const mapStateToProps = state => ({
-    selectedTab: state.selectedTab.name,
-})
 
 const mapDispatchToProps = (dispatch) => ({
     setSnackError: (payload) => dispatch(setSnackError(payload)),
@@ -296,4 +293,4 @@ const mapDispatchToProps = (dispatch) => ({
     setSnackClose: () => dispatch(setSnackClose())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CustomForm);
+export default connect(null, mapDispatchToProps)(CustomForm);

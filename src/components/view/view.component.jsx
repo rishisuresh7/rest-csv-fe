@@ -6,6 +6,7 @@ import Table from '../table/table.component';
 import TableDetail from '../table/table-detail.component';
 import CustomButton from '../button/button.component';
 import CustomForm from '../form/form.component';
+import DynamicCustomForm from '../form/custom-form.component'
 import AlertDialog from '../alert-dialog/alert-dialog.component';
 import { setSnackError, setSnackSuccess } from '../snack-bar/snack-bar.actions';
 import { setFormClose, setFormOpen } from '../custom-tabs/custom-tabs.actions';
@@ -37,7 +38,7 @@ const View = (props) => {
     }
     const handleDelete = () => {
         const deleteRows = selected.map(id => parseInt(id));
-        fetch(`/api/${props.apiType}`, {
+        fetch(`/api${utility.getAPIRoute(props.selectedTab.name)}`, {
             method: 'DELETE',
             body: JSON.stringify({ids: deleteRows}),
             headers: {
@@ -98,6 +99,7 @@ const View = (props) => {
     }, [props.token, rerender, props.selectedTab, search.sqn])
 
     const selectedDetails = utility.getHeaders(props.selectedTab.name);
+    const keys = [...selectedDetails.headers, ...selectedDetails.selectedRowKeys];
     const checkedRow = rows.find(item => selected.includes(item.id)) || {};
     return (
         <div className="view-container">
@@ -111,15 +113,30 @@ const View = (props) => {
             />
             {
                 props.selectedTab.formOpen ?
-                    <CustomForm
-                        token={props.token}
-                        setRerender={setRerender}
-                        isUpdate={selected.length > 0}
-                        data={rows.find(({id}) => selected.includes(id))}
-                        handleFormOpen={props.setFormClose}
-                        formType={props.selectedTab.name === "Demands" ? "demands" : "categories"}
-                        setLoading={setLoading}
-                    /> :
+                    <>
+                        {/* <CustomForm
+                            keys={keys}
+                            selectedTab={props.selectedTab.name}
+                            token={props.token}
+                            setRerender={setRerender}
+                            isUpdate={selected.length > 0}
+                            data={rows.find(({id}) => selected.includes(id))}
+                            handleFormOpen={props.setFormClose}
+                            formType={props.selectedTab.name === "Demands" ? "demands" : "categories"}
+                            setLoading={setLoading}
+                        /> */}
+                        <DynamicCustomForm
+                            keys={keys}
+                            selectedTab={props.selectedTab.name}
+                            token={props.token}
+                            setRerender={setRerender}
+                            isUpdate={selected.length > 0}
+                            data={rows.find(({id}) => selected.includes(id))}
+                            handleFormOpen={props.setFormClose}
+                            setLoading={setLoading}
+                        />
+                    </>
+                    :
                     <React.Fragment>
                         <div className="view-actions">
                             <CustomButton
@@ -163,7 +180,7 @@ const View = (props) => {
                                 setSelected={setSelected}
                             />
                             <TableDetail
-                                keys={[...selectedDetails.headers, ...selectedDetails.selectedRowKeys]}
+                                keys={keys}
                                 selectedRow = {checkedRow}
                             />
                         </div>

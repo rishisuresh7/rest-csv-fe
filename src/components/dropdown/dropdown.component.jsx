@@ -24,7 +24,7 @@ const Dropdown = (props) => {
             <Select
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
-                value={props.value}
+                value={props.value || ''}
                 onChange={(e) => props.handleChange(props.propName, e.target.value)}
                 label={props.name}
             >

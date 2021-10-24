@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import { setSelectedTab } from './custom-tabs.actions';
+import { setFormClose, setSelectedTab } from './custom-tabs.actions';
 
 const ScrollableTabs = (props) => {
   const [tabs, setTabs] = useState([]);
@@ -23,7 +23,13 @@ const ScrollableTabs = (props) => {
     }
   }, [props.token])
 
-  const handleChange = (event, newValue) => {
+  const handleFormClose = () => {
+    if(props.selectedTab.formOpen) {
+      props.setFormClose();
+    }
+  }
+
+  const handleChange = (_, newValue) => {
     props.setSelectedTab({value: newValue, name: tabs[newValue], formOpen: false})
   };
 
@@ -36,7 +42,12 @@ const ScrollableTabs = (props) => {
         scrollButtons={true}
       >
         {
-            tabs.map(tab => (<Tab label={tab} />))
+            tabs.map(tab => 
+              <Tab
+                onClick={handleFormClose}
+                label={tab}
+              />
+            )
         }
       </Tabs>
     </Box>
@@ -49,6 +60,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setSelectedTab: (payload) => dispatch(setSelectedTab(payload)),
+  setFormClose: () => dispatch(setFormClose(),)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ScrollableTabs);

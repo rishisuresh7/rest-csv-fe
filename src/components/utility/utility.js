@@ -13,25 +13,26 @@ export const getHeaders = (selectedTab ) => {
                 headers: [
                     {label: 'Sl No.', value: 'sno'},
                     {label: 'BA No.', value: 'baNumber', width: 100},
-                    {label: 'Squadron', value: 'squadron', width: 130},
+                    {label: 'Squadron', value: 'squadron', width: 130, type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
                     {label: 'Type', value: 'type'},
                     {label: 'Vehicle Type', value: 'vehicleType', width: 140},
                 ],
                 selectedRowKeys: [
-                    {label: 'Kilometers', value: 'kilometers'},
-                    {label: 'EFC', value: 'efc'},
-                    {label: 'Engine Hours', value: 'engineHours'},
-                    {label: 'TM 1', value: 'tm1'},
-                    {label: 'TM 2', value: 'tm1'},
-                    {label: 'MR1 1', value: 'mr1'},
-                    {label: 'MR2 2', value: 'mr2'},
-                    {label: 'CMS In', value: 'cmsIn'},
-                    {label: 'CMS Out', value: 'cmsOut'},
-                    {label: 'Workshop In', value: 'WorkshopIn'},
-                    {label: 'Workshop Out', value: 'WorkshopOut'},
+                    {label: 'Kilometers', value: 'kilometers', type: 'integer'},
+                    {label: 'EFC', value: 'efc', type: 'integer'},
+                    {label: 'Engine Hours', value: 'engineHours', type: 'integer'},
+                    {label: 'TM 1', value: 'tm1', type: 'date'},
+                    {label: 'TM 2', value: 'tm2', type: 'date'},
+                    {label: 'MR 1', value: 'mr1', type: 'date'},
+                    {label: 'MR 2', value: 'mr2', type: 'date'},
+                    {label: 'CMS In', value: 'cmsIn', type: 'date'},
+                    {label: 'CMS Out', value: 'cmsOut', type: 'date'},
+                    {label: 'Workshop In', value: 'workshopIn', type: 'date'},
+                    {label: 'Workshop Out', value: 'workshopOut', type: 'date'},
+                    {label: 'FD Firing', value: 'fdFiring', type: 'date'},
                     {label: 'Series Inspection', value: 'seriesInspection'},
                     {label: 'TRG/OP', value: 'trg'},
-                    {label: 'Remarks', value: 'remarks'},
+                    {label: 'Remarks', value: 'remarks', type: 'text'},
                 ],
             }
         case 'b vehicle':
@@ -40,18 +41,17 @@ export const getHeaders = (selectedTab ) => {
                 headers: [
                     {label: 'Sl No.', value: 'sno'},
                     {label: 'BA No.', value: 'baNumber', width: 100},
-                    {label: 'Squadron', value: 'squadron', width: 130},
+                    {label: 'Squadron', value: 'squadron', width: 130, type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
                     {label: 'Type', value: 'type'},
                     {label: 'Vehicle Type', value: 'vehicleType', width: 140},
                 ],
                 selectedRowKeys: [
-                    {label: 'Kilometers', value: 'kilometers'},
-                    {label: 'Engine Hours', value: 'engineHours'},
-                    {label: 'CMS In', value: 'cmsIn'},
-                    {label: 'CMS Out', value: 'cmsOut'},
-                    {label: 'Workshop In', value: 'WorkshopIn'},
-                    {label: 'Workshop Out', value: 'WorkshopOut'},
-                    {label: 'Remarks', value: 'remarks'},
+                    {label: 'Kilometers', value: 'kilometers', type: 'integer'},
+                    {label: 'CMS In', value: 'cmsIn', type: 'date'},
+                    {label: 'CMS Out', value: 'cmsOut', type: 'date'},
+                    {label: 'Workshop In', value: 'workshopIn', type: 'date'},
+                    {label: 'Workshop Out', value: 'workshopOut', type: 'date'},
+                    {label: 'Remarks', value: 'remarks', type: 'text'},
                 ],
             }
         case 'demands':
@@ -59,16 +59,16 @@ export const getHeaders = (selectedTab ) => {
                 headers: [
                     {label: 'Sl No.', value: 'sno'},
                     {label: 'BA No.', value: 'baNumber', width: 100},
-                    {label: 'Squadron', value: 'squadron', width: 130},
-                    {label: 'Vehicle Type', value: 'vehicleType', width: 140},
+                    {label: 'Squadron', value: 'squadron', width: 130, type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
+                    {label: 'Vehicle Type', value: 'vehicleType', width: 140, type: 'dropdown', options: ['A', 'B']},
                 ],
                 selectedRowKeys: [
                     {label: 'Equipment Demanded', value: 'equipmentDemanded'},
                     {label: 'Depot', value: 'depot'},
+                    {label: 'Demand Date', value: 'demandDate', type: 'date'},
                     {label: 'Demand Number', value: 'demandNumber'},
-                    {label: 'Demand Date', value: 'demandDate'},
+                    {label: 'Control Date', value: 'controlDate', type: 'date'},
                     {label: 'Control Number', value: 'controlNumber'},
-                    {label: 'Control Date', value: 'controlDate'},
                     {label: 'Status', value: 'status'},
                 ],
             }
@@ -78,16 +78,16 @@ export const getHeaders = (selectedTab ) => {
                     {label: 'Sl No.', value: 'sno'},
                     {label: 'Name', value: 'name', width: 150},
                     {label: 'Regd. Number', value: 'registeredNumber', width: 150},
-                    {label: 'Quantity Held', value: 'quantityHeld', width: 150},
-                    {label: 'Quantity Auth', value: 'quantityAuth', width: 150},
+                    {label: 'Quantity Held', value: 'quantityHeld', width: 150, type: 'integer'},
+                    {label: 'Quantity Auth', value: 'quantityAuth', width: 150, type: 'integer'},
                 ],
                 selectedRowKeys: [
-                    {label: 'Year of proc', value: 'yearOfProc'},
-                    {label: 'Cost', value: 'cost'},
-                    {label: 'Quantity Ser', value: 'quantityServed'},
+                    {label: 'Year of proc', value: 'yearOfProc', type: 'integer'},
+                    {label: 'Cost', value: 'cost', type: 'integer', step: '0.01'},
+                    {label: 'Quantity Ser', value: 'quantityServed', type: 'integer'},
                     {label: 'FWD TO', value: 'forwardTo'},
                     {label: 'Demand Details', value: 'demandDetails'},
-                    {label: 'Remarks', value: 'remarks'},
+                    {label: 'Remarks', value: 'remarks', type: 'text'},
                 ],
             }
         default:
@@ -128,6 +128,9 @@ export const getAPIRoute = (selectedTab, params) => {
             return '/acsfp';
         case 'demands':
             for(let key in params) {
+                if(key === 'search') {
+                    continue;
+                }
                 if(i === 0 ) {
                     queryString = '?'
                     i++

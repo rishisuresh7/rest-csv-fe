@@ -13,7 +13,7 @@ const CustomButton = (props) => {
         onClick = {onClick}
         style={extraLarge ? {height: '60px', width: '150px'}: {width: '100px'}}
       >
-        {text}
+        {text || props.children}
       </Button>
     </div>
   );
