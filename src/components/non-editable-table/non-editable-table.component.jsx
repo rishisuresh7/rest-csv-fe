@@ -46,6 +46,26 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+const CustomTableCell = ({ row, name, onChange, largeTableCell, handleDropdownChange }) => {
+  const classes = useStyles();
+  const { isEditMode } = row;
+  return (
+    <TableCell align="left" className={largeTableCell ? classes.largeTableCell : classes.tableCell}>
+      {isEditMode ? ( name === 'fieldName' ?
+        <Dropdown fullWidth value={row[name]} handleChange={(key, value) => handleDropdownChange(key, value, row)} propName={name} options={['Kilometers', 'EFC', 'TM 1', 'TM 2', 'CMS In', 'CMS Out']}/> :
+        <Input
+          value={row[name]}
+          name={name}
+          onChange={e => onChange(e, row)}
+          className={largeTableCell ? classes.largeInput : classes.input}
+        />
+      ) : (
+        row[name]
+      )}
+    </TableCell>
+  );
+};
+
 const NonEditableTable = props => {
     const [rows, setRows] = useState([]);
     const [alertOpen, setAlertOpen] = useState(false);
@@ -57,29 +77,11 @@ const NonEditableTable = props => {
                     {name: 'Next Value'}, {name: 'Remarks'}];
 
     const handleDropdownChange = (key, value, row) => {
-      setPrevious(state => ({ ...state, [row.id]: row }));
+      if(!previous[row.id]) {
+        setPrevious(state => ({ ...state, [row.id]: row }));
+      }
       setRows(rows.map(item => item.id === row.id ? ({...item, [key]: value}) : item))
     }
-
-    const CustomTableCell = ({ row, name, onChange, largeTableCell }) => {
-      const classes = useStyles();
-      const { isEditMode } = row;
-      return (
-        <TableCell align="left" className={largeTableCell ? classes.largeTableCell : classes.tableCell}>
-          {isEditMode ? ( name === 'fieldName' ? 
-            <Dropdown fullWidth value={row[name]} handleChange={(key, value) => handleDropdownChange(key, value, row)} propName={name} options={['Kilometers', 'EFC', 'TM 1', 'TM 2']}/> :
-            <Input
-              value={row[name]}
-              name={name}
-              onChange={e => onChange(e, row)}
-              className={largeTableCell ? classes.largeInput : classes.input}
-            />
-          ) : (
-            row[name]
-          )}
-        </TableCell>
-      );
-    };
 
     useEffect(() => {
       fetch('/api/alerts', {
@@ -173,7 +175,9 @@ const NonEditableTable = props => {
     };
 
     const onChange = (e, row) => {
-      setPrevious(state => ({ ...state, [row.id]: row }));
+      if(!previous[row.id]) {
+        setPrevious(state => ({ ...state, [row.id]: row }));
+      }
       const value = e.target.value;
       const name = e.target.name;
       const { id } = row;
@@ -235,7 +239,7 @@ const NonEditableTable = props => {
                             </TableCell>
                             <CustomTableCell {...{ row, name: "alertName", onChange }} />
                             <CustomTableCell {...{ row, name: "ba_number", onChange }} />
-                            <CustomTableCell {...{ row, name: "fieldName", onChange }} />
+                            <CustomTableCell {...{ row, name: "fieldName", onChange, handleDropdownChange }} />
                             <CustomTableCell {...{ row, name: "lastValue", onChange }} />
                             <CustomTableCell {...{ row, name: "nextValue", onChange }} />
                             <CustomTableCell {...{ row, name: "remarks", onChange, largeTableCell: true }} />

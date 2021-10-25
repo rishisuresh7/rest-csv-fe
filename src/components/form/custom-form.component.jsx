@@ -89,7 +89,12 @@ const DynamicCustomForm = (props) => {
     }
 
     const parseDate = (date) => {
-        return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
+        const month = date.getMonth()+1;
+        const formattedMonth = month <= 9 ? `0${month}` : month
+        const day = date.getDate();
+        const formattedDay = day <= 9 ? `0${day}` : day;
+
+        return `${date.getFullYear()}-${formattedMonth}-${formattedDay}`
     }
 
     const handleSubmit = () => {

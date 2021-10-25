@@ -144,8 +144,8 @@ const EditableTable = props => {
     };
 
     const onChange = (e, row) => {
-      if (!previous[row.id]) {
-          setPrevious(state => ({ ...state, [row.id]: row }));
+      if(!previous[row.id]) {
+        setPrevious(state => ({ ...state, [row.id]: row }));
       }
       const value = e.target.value;
       const name = e.target.name;

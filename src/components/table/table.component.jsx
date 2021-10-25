@@ -25,7 +25,7 @@ const Table = (props) => {
             disableSelectionOnClick
             pagination
             pageSize={pageSize}
-            rowsPerPageOptions={[5, 10, 15]}
+            rowsPerPageOptions={[10, 15, 20]}
             onPageSizeChange={({pageSize}) => setPageSize(pageSize)}
             onRowSelected={({isSelected, data}) => {
                 props.handleSelected(isSelected, data);

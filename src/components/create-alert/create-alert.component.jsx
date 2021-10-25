@@ -82,7 +82,7 @@ const CreateAlert = props => {
                         <InputLabel htmlFor="component-outlined">BA Number</InputLabel>
                         <OutlinedInput id="component-outlined" value={values.ba_number} onChange={(e) => handleChange('ba_number', e.target.value)} label="BA Number" />
                     </FormControl>
-                    <Dropdown fullWidth value={values.fieldName} handleChange={handleChange} propName='fieldName' setNone name="TriggerField" options={['Kilometers', 'EFC', 'TM 1', 'TM 2']}/>
+                    <Dropdown fullWidth value={values.fieldName} handleChange={handleChange} propName='fieldName' setNone name="TriggerField" options={['Kilometers', 'EFC', 'TM 1', 'TM 2', 'CMS In', 'CMS Out']}/>
                     <FormControl required fullWidth className="forms-text-field" variant="outlined">
                         <InputLabel htmlFor="component-outlined">Last Value</InputLabel>
                         <OutlinedInput id="component-outlined" value={values.lastValue} onChange={(e) => handleChange('lastValue', e.target.value)} label="Last Value" />
