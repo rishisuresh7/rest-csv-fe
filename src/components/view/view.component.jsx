@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Table from '../table/table.component';
 import TableDetail from '../table/table-detail.component';
 import CustomButton from '../button/button.component';
-import CustomForm from '../form/form.component';
+//import CustomForm from '../form/form.component';
 import DynamicCustomForm from '../form/custom-form.component'
 import AlertDialog from '../alert-dialog/alert-dialog.component';
 import { setSnackError, setSnackSuccess } from '../snack-bar/snack-bar.actions';
@@ -25,17 +25,24 @@ const View = (props) => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [rows, setRows] = useState([]);
     const [filteredRows, setFilteredRows] = useState([]);
+    const selectedDetails = utility.getHeaders(props.selectedTab.name);
+    const keys = [...selectedDetails.headers, ...selectedDetails.selectedRowKeys];
+    const checkedRow = rows.find(item => selected.includes(item.id)) || {};
+
     const handleSelected = (isSelected, data) => {
         const newRows = isSelected ? [...selectedRows, data] : selectedRows.filter(({id}) => id !== data.id);
         setSelectedRows(newRows);
     }
+
     const handleChange = (prop, value) => {
         setSearch({...search, [prop]: value})
         if (prop === 'query') {
-            const data = value ? rows.filter(item => item.ba_no && item.ba_no.includes(value)) : rows;
+            let searchFieldName = props.selectedTab.name.toUpperCase() === 'ACSFP' ? 'name' : 'baNumber';
+            const data = value ? rows.filter(item => item[searchFieldName] && item[searchFieldName].includes(value)) : rows;
             setFilteredRows(data);
         }
     }
+
     const handleDelete = () => {
         const deleteRows = selected.map(id => parseInt(id));
         fetch(`/api${utility.getAPIRoute(props.selectedTab.name)}`, {
@@ -98,9 +105,6 @@ const View = (props) => {
         })
     }, [props.token, rerender, props.selectedTab, search.sqn])
 
-    const selectedDetails = utility.getHeaders(props.selectedTab.name);
-    const keys = [...selectedDetails.headers, ...selectedDetails.selectedRowKeys];
-    const checkedRow = rows.find(item => selected.includes(item.id)) || {};
     return (
         <div className="view-container">
             <AlertDialog

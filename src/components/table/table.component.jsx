@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { DataGrid } from '@material-ui/data-grid';
 import './table.styles.scss';
 
 const Table = (props) => {
-    const columns = props.headers.map(({label, value, width}, index) => {
+    const [pageSize, setPageSize] = useState(10);
+    const columns = props.headers.map(({label, value, width}) => {
         return {
             field: value,
             headerName: label.toUpperCase(),
@@ -16,14 +17,16 @@ const Table = (props) => {
     return (
     <div className="table">
         <DataGrid
-            autoHeight
             rows={props.rows || []}
             columns={columns}
             loading={props.loading}
             checkboxSelection
             disableColumnMenu
             disableSelectionOnClick
-            hideFooterPagination
+            pagination
+            pageSize={pageSize}
+            rowsPerPageOptions={[5, 10, 15]}
+            onPageSizeChange={({pageSize}) => setPageSize(pageSize)}
             onRowSelected={({isSelected, data}) => {
                 props.handleSelected(isSelected, data);
             }}
