@@ -13,15 +13,14 @@ import "date-fns";
 import { setSnackError, setSnackSuccess, setSnackClose } from '../snack-bar/snack-bar.actions';
 import './form.styles.scss';
 import { useEffect } from 'react';
-import DatePicker from 'react-multi-date-picker';
 
-const getVehicleName = (vehicleName) => {
-    if(vehicleName.includes('A')) {
+const getVehicleName = (selectedTab, vehicleType) => {
+    if(selectedTab.includes('A')) {
         return 'A'
-    } else if(vehicleName.includes('B')) {
+    } else if(selectedTab.includes('B')) {
         return 'B'
     } else {
-        return 'OTHERS'
+        return vehicleType;
     }
 }
 
@@ -116,7 +115,7 @@ const DynamicCustomForm = (props) => {
         }
         fetch(`/api/${utility.getAPIRoute(props.selectedTab)}`, {
             method: props.isUpdate ? 'PATCH' : 'POST',
-            body: JSON.stringify([{...postData, vehicleType: getVehicleName(props.selectedTab)}]),
+            body: JSON.stringify([{...postData, vehicleType: getVehicleName(props.selectedTab, postData.vehicleType)}]),
             headers: {
                 'Authorization': props.token,
             }

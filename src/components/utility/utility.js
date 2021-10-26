@@ -11,9 +11,9 @@ export const getHeaders = (selectedTab ) => {
         case 'a vehicle':
             return {
                 headers: [
-                    {label: 'Sl No.', value: 'sno'},
+                    {label: 'S.No.', value: 'sno', width: 60},
                     {label: 'BA No.', value: 'baNumber', width: 130},
-                    {label: 'Squadron', value: 'squadron', width: 130, type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
+                    {label: 'SQN', value: 'squadron', type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
                     {label: 'Type', value: 'type'},
                     {label: 'Vehicle Type', value: 'vehicleType', width: 140},
                 ],
@@ -39,9 +39,9 @@ export const getHeaders = (selectedTab ) => {
         case 'others':
             return {
                 headers: [
-                    {label: 'Sl No.', value: 'sno'},
+                    {label: 'S.No.', value: 'sno', width: 60},
                     {label: 'BA No.', value: 'baNumber', width: 130},
-                    {label: 'Squadron', value: 'squadron', width: 130, type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
+                    {label: 'SQN', value: 'squadron', type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
                     {label: 'Type', value: 'type'},
                     {label: 'Vehicle Type', value: 'vehicleType', width: 140},
                 ],
@@ -57,25 +57,25 @@ export const getHeaders = (selectedTab ) => {
         case 'demands':
             return {
                 headers: [
-                    {label: 'Sl No.', value: 'sno'},
+                    {label: 'S.No.', value: 'sno', width: 60},
                     {label: 'BA No.', value: 'baNumber', width: 130},
-                    {label: 'Squadron', value: 'squadron', width: 130, type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
-                    {label: 'Vehicle Type', value: 'vehicleType', width: 140, type: 'dropdown', options: ['A', 'B']},
+                    {label: 'SQN', value: 'squadron', type: 'dropdown', options: ['A', 'B', 'C', 'HQ']},
+                    {label: 'Vehicle Type', value: 'vehicleType', width: 120, type: 'dropdown', options: ['A', 'B']},
+                    {label: 'Depot', value: 'depot', width: 100},
+                    {label: 'Status', value: 'status', width: 100},
                 ],
                 selectedRowKeys: [
                     {label: 'Equipment Demanded', value: 'equipmentDemanded'},
-                    {label: 'Depot', value: 'depot'},
                     {label: 'Demand Date', value: 'demandDate', type: 'date'},
                     {label: 'Demand Number', value: 'demandNumber'},
                     {label: 'Control Date', value: 'controlDate', type: 'date'},
                     {label: 'Control Number', value: 'controlNumber'},
-                    {label: 'Status', value: 'status'},
                 ],
             }
         case 'acsfp':
             return {
                 headers: [
-                    {label: 'Sl No.', value: 'sno'},
+                    {label: 'S.No.', value: 'sno', width: 60},
                     {label: 'Name', value: 'name', width: 150},
                     {label: 'Regd. Number', value: 'registeredNumber', width: 150},
                     {label: 'Quantity Held', value: 'quantityHeld', width: 150, type: 'integer'},
